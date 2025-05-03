@@ -22,7 +22,7 @@
                 </div>
                 <div class="ml-4">
                     <h3 class="text-lg font-semibold text-gray-700">Mahasiswa</h3>
-                    {{-- <p class="text-2xl font-bold text-gray-800">{{ $totalMahasiswa }}</p> --}}
+                    <p class="text-2xl font-bold text-gray-800">{{ $totalMahasiswa }}</p>
                 </div>
             </div>
         </div>
@@ -35,7 +35,7 @@
                 </div>
                 <div class="ml-4">
                     <h3 class="text-lg font-semibold text-gray-700">Dosen</h3>
-                    {{-- <p class="text-2xl font-bold text-gray-800">{{ $totalDosen }}</p> --}}
+                    <p class="text-2xl font-bold text-gray-800">{{ $totalDosen }}</p>
                 </div>
             </div>
         </div>
@@ -48,7 +48,7 @@
                 </div>
                 <div class="ml-4">
                     <h3 class="text-lg font-semibold text-gray-700">Pengajuan Sempro</h3>
-                    {{-- <p class="text-2xl font-bold text-gray-800">{{ $totalPengajuan }}</p> --}}
+                    <p class="text-2xl font-bold text-gray-800">{{ $totalPengajuan }}</p>
                 </div>
             </div>
         </div>
@@ -61,7 +61,7 @@
                 </div>
                 <div class="ml-4">
                     <h3 class="text-lg font-semibold text-gray-700">Jadwal Sempro</h3>
-                    {{-- <p class="text-2xl font-bold text-gray-800">{{ $totalJadwal }}</p> --}}
+                    <p class="text-2xl font-bold text-gray-800">{{ $totalJadwal }}</p>
                 </div>
             </div>
         </div>
@@ -74,7 +74,7 @@
                 </div>
                 <div class="ml-4">
                     <h3 class="text-lg font-semibold text-gray-700">Hasil Sempro</h3>
-                    {{-- <p class="text-2xl font-bold text-gray-800">{{ $totalHasil }}</p> --}}
+                    <p class="text-2xl font-bold text-gray-800">{{ $totalHasil }}</p>
                 </div>
             </div>
         </div>
@@ -88,10 +88,10 @@
 
     <!-- Navigasi Cepat -->
     <div class="flex space-x-4 mb-8">
-        <a href="{{ route('admin.jadwal.sempro.index') }}" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
+        <a href="{{ route('admin.dashboard') }}" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
             <i class="fas fa-calendar mr-2"></i> Kelola Jadwal Sempro
         </a>
-        <a href="{{ route('admin.hasil.sempro.index') }}" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
+        <a href="{{ route('admin.dashboard') }}" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
             <i class="fas fa-file-alt mr-2"></i> Kelola Hasil Sempro
         </a>
     </div>

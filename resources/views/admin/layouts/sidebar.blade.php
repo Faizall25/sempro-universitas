@@ -26,7 +26,7 @@
                 </button>
                 <ul x-show="open" class="pl-6 mt-1 space-y-1">
                     <li>
-                        <a href="{{ route('admin.dosen.all.index') }}" class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('admin.dosen.all.*') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
+                        <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('admin.dosen.all.*') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
                             <i class="fas fa-users"></i>
                             <span>Dosen</span>
                         </a>
@@ -55,13 +55,13 @@
                 </button>
                 <ul x-show="open" class="pl-6 mt-1 space-y-1">
                     <li>
-                        <a href="{{ route('admin.jadwal.mata-kuliah.index') }}" class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('admin.jadwal.mata-kuliah.*') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
+                        <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('admin.jadwal.mata-kuliah.*') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
                             <i class="fas fa-book-open"></i>
                             <span>Jadwal Mata Kuliah</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('admin.jadwal.sempro.index') }}" class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('admin.jadwal.sempro.*') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
+                        <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('admin.jadwal.sempro.*') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
                             <i class="fas fa-calendar-check"></i>
                             <span>Jadwal Sempro</span>
                         </a>
@@ -75,7 +75,7 @@
                 </a>
             </li> --}}
             <li>
-                <a href="{{ route('admin.hasil.sempro.index') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-200">
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-200">
                     <i class="fas fa-file-alt"></i>
                     <span>Hasil Seminar</span>
                 </a>
