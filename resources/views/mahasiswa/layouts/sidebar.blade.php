@@ -11,33 +11,21 @@
         <p class="text-xs font-semibold text-gray-500 uppercase mb-2 mt-10">General</p>
         <ul class="text-sm text-gray-600 space-y-2">
             <li>
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('admin.dashboard') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
+                <a href="{{ route('mahasiswa.home') }}" class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('mahasiswa.home') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
                     <i class="fas fa-home"></i>
-                    <span>General</span>
+                    <span>Home</span>
                 </a>
             </li>
             <li>
-                <a href="#" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-200">
-                    <i class="fas fa-user-tie"></i>
-                    <span>Dosen</span>
+                <a href="{{ route('mahasiswa.profile') }}" class="flex items-center space-x-3 p-2 rounded-lg  {{ request()->routeIs('mahasiswa.profile') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
+                    <i class="fas fa-user-alt"></i>
+                    <span>Profile</span>
                 </a>
             </li>
             <li>
-                <a href="#" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-200">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>Jadwal</span>
-                </a>
-            </li>
-            <li>
-                <a href="#" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-200">
-                    <i class="fas fa-book"></i>
-                    <span>Sempro</span>
-                </a>
-            </li>
-            <li>
-                <a href="#" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-200">
-                    <i class="fas fa-file-alt"></i>
-                    <span>Hasil Seminar</span>
+                <a href="{{ route('mahasiswa.pengajuan_sempro.index') }}" class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('mahasiswa.pengajuan_sempro.index') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
+                    <i class="fas fa-calendar"></i>
+                    <span>Pengajuan Proposal</span>
                 </a>
             </li>
         </ul>

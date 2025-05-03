@@ -9,19 +9,17 @@ class Mahasiswa extends Model
     protected $table = "mahasiswa";
     protected $fillable = [
         'user_id',
-        'npm',
+        'nim',
         'tempat_lahir',
         'tanggal_lahir',
         'asal_kota',
         'program_studi',
         'fakultas',
-        'angkatan',
         'tahun_masuk'
     ];
 
     protected $casts = [
         'tanggal_lahir' => 'date',
-        'angkatan' => 'integer',
         'tahun_masuk' => 'integer',
     ];
 

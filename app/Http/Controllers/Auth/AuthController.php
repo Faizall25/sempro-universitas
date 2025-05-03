@@ -47,11 +47,12 @@ class AuthController extends Controller
             // Redirect berdasarkan role
             switch ($role) {
                 case 'mahasiswa':
-                    return redirect()->intended('/mahasiswa/dashboard');
+                    return redirect()->intended('/mahasiswa/home');
                 case 'dosen':
                     return redirect()->intended('/dosen/dashboard');
                 case 'admin':
                     return redirect()->intended('/admin/dashboard');
+                    // return view('admin.dashboard');
                 default:
                     Auth::logout();
                     return back()->withErrors(['email' => 'Role tidak valid.']);

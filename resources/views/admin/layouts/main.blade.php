@@ -79,12 +79,12 @@
     <div x-data="{ sidebarOpen: false }" class="relative">
         <!-- Navbar -->
         <div class="navbar">
-            @include('admin.layout.header')
+            @include('admin.layouts.header')
         </div>
 
         <!-- Sidebar -->
         <div class="sidebar" :class="{ 'sidebar-hidden': !sidebarOpen }">
-            @include('admin.layout.sidebar')
+            @include('admin.layouts.sidebar')
         </div>
 
         <!-- Content -->
@@ -92,7 +92,7 @@
             @yield('content')
             <!-- Footer -->
             <div class="footer">
-                @include('admin.layout.footer')
+                @include('admin.layouts.footer')
             </div>
         </main>
     </div>

@@ -1,13 +1,4 @@
 <div class="flex items-center justify-between p-4">
-    <!-- Logo -->
-    {{-- <div class="flex items-center space-x-2">
-        <button @click="sidebarOpen = !sidebarOpen" class="text-gray-600 md:hidden">
-            <i class="fas fa-bars"></i>
-        </button>
-        <img src="/assets/img/iku.png" alt="Logo" class="w-8 h-8">
-        <span class="text-lg font-semibold text-teal-700">SEMPRO UIN Malang</span>
-    </div> --}}
-
     <!-- Search Bar -->
     <div class="flex-1 max-w-md mx-4">
         <div class="relative">
@@ -21,7 +12,7 @@
     <!-- User Dropdown -->
     <div x-data="{ open: false }" class="relative">
         <button @click="open = !open" class="flex items-center space-x-2 text-gray-700">
-            <span>Administrator</span>
+            <span>Selamat Datang, {{ Auth::user()->name }}</span>
             <i class="fas fa-chevron-down"></i>
         </button>
         <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">

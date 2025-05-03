@@ -2,41 +2,52 @@
 
 namespace Database\Seeders;
 
-use App\Models\Dosen;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Faker\Factory as Faker;
+use App\Models\Dosen;
+use App\Models\User;
+use App\Models\BidangKeilmuan;
 
 class DosenSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function run()
     {
-        $faker = Faker::create('id_ID');
+        // Pastikan ada data di tabel bidang_keilmuan
+        $bidangKeilmuan = BidangKeilmuan::firstOrCreate(['name' => 'Ilmu Komputer']);
 
-        $dosen = [
-            [
-                'user_id' => 2, // Dr. Budi Santoso
-                'nip' => '1234567890',
-                'tempat_lahir' => $faker->city,
-                'tanggal_lahir' => $faker->date('Y-m-d', '1980-01-01'),
-                'asal_kota' => $faker->city,
-                'bidang_keilmuan_id' => 1, // Sistem Informasi
-                'peran' => 'pembimbing',
-            ],
-            [
-                'user_id' => 3, // Prof. Anita Wijaya
-                'nip' => '0987654321',
-                'tempat_lahir' => $faker->city,
-                'tanggal_lahir' => $faker->date('Y-m-d', '1975-01-01'),
-                'asal_kota' => $faker->city,
-                'bidang_keilmuan_id' => 2, // Kecerdasan Buatan
-                'peran' => 'penguji',
-            ],
-        ];
+        // Buat user dosen jika belum ada
+        $user1 = User::firstOrCreate([
+            'email' => 'dosen1@university.com',
+            'role' => 'dosen',
+        ], [
+            'name' => 'Dosen Satu',
+            'password' => bcrypt('password'),
+        ]);
 
-        Dosen::insert($dosen);
+        $user2 = User::firstOrCreate([
+            'email' => 'dosen2@university.com',
+            'role' => 'dosen',
+        ], [
+            'name' => 'Dosen Dua',
+            'password' => bcrypt('password'),
+        ]);
+
+        // Tambah data ke tabel dosen
+        Dosen::create([
+            'user_id' => $user1->id,
+            'nip' => '1234567890',
+            'tempat_lahir' => 'Jakarta',
+            'tanggal_lahir' => '1980-01-01',
+            'asal_kota' => 'Jakarta',
+            'bidang_keilmuan_id' => $bidangKeilmuan->id,
+        ]);
+
+        Dosen::create([
+            'user_id' => $user2->id,
+            'nip' => '0987654321',
+            'tempat_lahir' => 'Surabaya',
+            'tanggal_lahir' => '1982-03-15',
+            'asal_kota' => 'Surabaya',
+            'bidang_keilmuan_id' => $bidangKeilmuan->id,
+        ]);
     }
 }

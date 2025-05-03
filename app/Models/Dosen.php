@@ -7,10 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Dosen extends Model
 {
     protected $table = 'dosen';
-    protected $fillable = ['user_id', 'nidn', 'tempat_lahir', 'tanggal_lahir', 'asal_kota', 'bidang_keilmuan_id', 'peran'];
+    protected $fillable = ['user_id', 'nip', 'tempat_lahir', 'tanggal_lahir', 'asal_kota', 'bidang_keilmuan_id'];
 
     protected $casts = [
-        'peran' => 'string',
         'tanggal_lahir' => 'date',
     ];
 
@@ -47,5 +46,15 @@ class Dosen extends Model
     public function jadwalSemproPenguji3()
     {
         return $this->hasMany(JadwalSempro::class, 'dosen_penguji_3');
+    }
+
+    public function pembimbing()
+    {
+        return $this->hasOne(DosenPembimbing::class, 'dosen_id');
+    }
+
+    public function penguji()
+    {
+        return $this->hasOne(DosenPenguji::class, 'dosen_id');
     }
 }

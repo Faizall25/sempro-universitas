@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class BidangKeilmuan extends Model
 {
     protected $table = 'bidang_keilmuan';
-    protected $fillable = ['nama'];
+    protected $fillable = ['name'];
 
     public function dosen()
     {
