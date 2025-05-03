@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DosenController;
 use App\Http\Controllers\Admin\JadwalController;
 use App\Http\Controllers\Admin\HasilController;
@@ -16,9 +17,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Rute untuk Admin
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     // Rute untuk Semua Dosen
     Route::get('/dosen/all', [DosenController::class, 'allIndex'])->name('admin.dosen.all.index');
