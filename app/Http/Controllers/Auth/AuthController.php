@@ -49,7 +49,7 @@ class AuthController extends Controller
                 case 'mahasiswa':
                     return redirect()->intended('/mahasiswa/home');
                 case 'dosen':
-                    return redirect()->intended('/dosen/dashboard');
+                    return redirect()->intended('/dosen/home');
                 case 'admin':
                     return redirect()->intended('/admin/dashboard');
                     // return view('admin.dashboard');

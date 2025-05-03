@@ -85,9 +85,7 @@ Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
 
 // Rute Dashboard Dosen
 Route::middleware(['auth', 'role:dosen'])->group(function () {
-    Route::get('/dosen/dashboard', function () {
-        return view('dosen.dashboard');
-    })->name('dosen.dashboard');
+    Route::get('dosen/home', [HomeController::class, 'home'])->name('dosen.home');
 });
 
 // Redirect root ke login

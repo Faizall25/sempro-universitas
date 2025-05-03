@@ -18,7 +18,7 @@ class DosenPembimbingSeeder extends Seeder
         $dosen = Dosen::where('nip', '1234567890')->first();
 
         if ($dosen && !$dosen->pembimbing && !$dosen->penguji) {
-            DosenPembimbing::create([
+            DosenPembimbing::create(attributes: [
                 'dosen_id' => $dosen->id,
                 'kapasitas_maksimum' => 5,
                 'status_aktif' => true,
