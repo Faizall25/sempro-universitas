@@ -7,54 +7,69 @@ use App\Models\Dosen;
 use App\Models\DosenPembimbing;
 use App\Models\DosenPenguji;
 use App\Models\BidangKeilmuan;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class DosenController extends Controller
 {
-    public function pembimbingIndex()
+    // CRUD untuk Semua Dosen
+    public function allIndex()
     {
-        $dosen = Dosen::with('pembimbing')->has('pembimbing')->get();
-        return view('admin.dosen.pembimbing.index', compact('dosen'));
+        $dosen = Dosen::with(['user', 'bidangKeilmuan'])->get();
+        return view('admin.dosen.all.index', compact('dosen'));
     }
 
-    public function pembimbingCreate()
+    public function allCreate()
     {
-        $dosenList = Dosen::doesntHave('pembimbing')->doesntHave('penguji')->get();
-        return view('admin.dosen.pembimbing.create', compact('dosenList'));
+        $bidangKeilmuan = BidangKeilmuan::all();
+        return view('admin.dosen.all.create', compact('bidangKeilmuan'));
     }
 
-    public function pembimbingStore(Request $request)
+    public function allStore(Request $request)
     {
         $request->validate([
-            'dosen_id' => 'required|exists:dosen,id',
+            'name' => 'required|string|max:100',
+            'email' => 'required|email|unique:users,email',
+            'nip' => 'required|string|max:30|unique:dosen,nip',
+            'tempat_lahir' => 'required|string|max:50',
+            'tanggal_lahir' => 'required|date',
+            'asal_kota' => 'required|string|max:100',
+            'bidang_keilmuan_id' => 'required|exists:bidang_keilmuan,id',
         ]);
 
-        $dosen = Dosen::findOrFail($request->dosen_id);
-        if ($dosen->pembimbing || $dosen->penguji) {
-            return back()->withErrors(['dosen_id' => 'Dosen ini sudah menjadi pembimbing atau penguji.']);
-        }
-
-        DosenPembimbing::create([
-            'dosen_id' => $dosen->id,
-            'kapasitas_maksimum' => 5,
-            'status_aktif' => true,
+        // Buat user baru
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make('password'), // Password default, bisa diubah oleh dosen
+            'role' => 'dosen',
         ]);
 
-        return redirect()->route('admin.dosen.pembimbing.index')
-            ->with('success', 'Dosen berhasil ditambahkan sebagai pembimbing.');
+        // Buat dosen baru
+        Dosen::create([
+            'user_id' => $user->id,
+            'nip' => $request->nip,
+            'tempat_lahir' => $request->tempat_lahir,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'asal_kota' => $request->asal_kota,
+            'bidang_keilmuan_id' => $request->bidang_keilmuan_id,
+        ]);
+
+        return redirect()->route('admin.dosen.all.index')
+            ->with('success', 'Dosen berhasil ditambahkan.');
     }
 
-    public function pembimbingEdit($id)
+    public function allEdit($id)
     {
-        $dosen = Dosen::with('pembimbing')->findOrFail($id);
+        $dosen = Dosen::with('user')->findOrFail($id);
         $bidangKeilmuan = BidangKeilmuan::all();
-        return view('admin.dosen.pembimbing.edit', compact('dosen', 'bidangKeilmuan'));
+        return view('admin.dosen.all.edit', compact('dosen', 'bidangKeilmuan'));
     }
 
-    public function pembimbingUpdate(Request $request, $id)
+    public function allUpdate(Request $request, $id)
     {
         $dosen = Dosen::findOrFail($id);
-        $pembimbing = $dosen->pembimbing;
 
         $request->validate([
             'name' => 'required|string|max:100',
@@ -64,8 +79,6 @@ class DosenController extends Controller
             'tanggal_lahir' => 'required|date',
             'asal_kota' => 'required|string|max:100',
             'bidang_keilmuan_id' => 'required|exists:bidang_keilmuan,id',
-            'kapasitas_maksimum' => 'required|integer',
-            'status_aktif' => 'required|boolean',
         ]);
 
         $dosen->user->update([
@@ -79,6 +92,78 @@ class DosenController extends Controller
             'tanggal_lahir' => $request->tanggal_lahir,
             'asal_kota' => $request->asal_kota,
             'bidang_keilmuan_id' => $request->bidang_keilmuan_id,
+        ]);
+
+        return redirect()->route('admin.dosen.all.index')
+            ->with('success', 'Dosen berhasil diperbarui.');
+    }
+
+    public function allDestroy($id)
+    {
+        $dosen = Dosen::findOrFail($id);
+
+        // Hapus relasi pembimbing dan penguji
+        $dosen->pembimbing()->delete();
+        $dosen->penguji()->delete();
+
+        // Hapus user terkait
+        $dosen->user()->delete();
+
+        $dosen->delete();
+
+        return redirect()->route('admin.dosen.all.index')
+            ->with('success', 'Dosen berhasil dihapus.');
+    }
+
+    // CRUD untuk Dosen Pembimbing
+    public function pembimbingIndex()
+    {
+        $dosen = Dosen::with('pembimbing')->has('pembimbing')->get();
+        return view('admin.dosen.pembimbing.index', compact('dosen'));
+    }
+
+    public function pembimbingCreate()
+    {
+        $dosenList = Dosen::with(['pembimbing', 'penguji'])->get();
+        return view('admin.dosen.pembimbing.create', compact('dosenList'));
+    }
+
+    public function pembimbingStore(Request $request)
+    {
+        $request->validate([
+            'dosen_id' => 'required|exists:dosen,id',
+            'kapasitas_maksimum' => 'required|integer|min:1',
+        ]);
+
+        $dosen = Dosen::findOrFail($request->dosen_id);
+        if ($dosen->pembimbing) {
+            return back()->withErrors(['dosen_id' => 'Dosen ini sudah menjadi pembimbing.']);
+        }
+
+        DosenPembimbing::create([
+            'dosen_id' => $dosen->id,
+            'kapasitas_maksimum' => $request->kapasitas_maksimum,
+            'status_aktif' => true,
+        ]);
+
+        return redirect()->route('admin.dosen.pembimbing.index')
+            ->with('success', 'Dosen berhasil ditambahkan sebagai pembimbing.');
+    }
+
+    public function pembimbingEdit($id)
+    {
+        $dosen = Dosen::with('pembimbing')->findOrFail($id);
+        return view('admin.dosen.pembimbing.edit', compact('dosen'));
+    }
+
+    public function pembimbingUpdate(Request $request, $id)
+    {
+        $dosen = Dosen::findOrFail($id);
+        $pembimbing = $dosen->pembimbing;
+
+        $request->validate([
+            'kapasitas_maksimum' => 'required|integer|min:1',
+            'status_aktif' => 'required|boolean',
         ]);
 
         $pembimbing->update([
@@ -99,6 +184,7 @@ class DosenController extends Controller
             ->with('success', 'Dosen pembimbing berhasil dihapus dari daftar.');
     }
 
+    // CRUD untuk Dosen Penguji
     public function pengujiIndex()
     {
         $dosen = Dosen::with('penguji')->has('penguji')->get();
@@ -107,7 +193,7 @@ class DosenController extends Controller
 
     public function pengujiCreate()
     {
-        $dosenList = Dosen::doesntHave('pembimbing')->doesntHave('penguji')->get();
+        $dosenList = Dosen::with(['pembimbing', 'penguji'])->get();
         $bidangKeilmuan = BidangKeilmuan::all();
         return view('admin.dosen.penguji.create', compact('dosenList', 'bidangKeilmuan'));
     }
@@ -119,8 +205,8 @@ class DosenController extends Controller
         ]);
 
         $dosen = Dosen::findOrFail($request->dosen_id);
-        if ($dosen->pembimbing || $dosen->penguji) {
-            return back()->withErrors(['dosen_id' => 'Dosen ini sudah menjadi pembimbing atau penguji.']);
+        if ($dosen->penguji) {
+            return back()->withErrors(['dosen_id' => 'Dosen ini sudah menjadi penguji.']);
         }
 
         DosenPenguji::create([
@@ -177,6 +263,19 @@ class DosenController extends Controller
 
         return redirect()->route('admin.dosen.penguji.index')
             ->with('success', 'Dosen penguji berhasil diperbarui.');
+    }
+
+    public function pengujiToggleStatus(Request $request, $id)
+    {
+        $dosen = Dosen::with('penguji')->findOrFail($id);
+        $penguji = $dosen->penguji;
+
+        $penguji->update([
+            'status_aktif' => !$penguji->status_aktif,
+        ]);
+
+        return redirect()->route('admin.dosen.penguji.index')
+            ->with('success', 'Status dosen penguji berhasil diubah.');
     }
 
     public function pengujiDestroy($id)

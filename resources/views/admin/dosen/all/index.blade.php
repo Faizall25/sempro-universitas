@@ -1,11 +1,11 @@
 @extends('admin.layouts.main')
 
-@section('title', 'Dosen Penguji')
+@section('title', 'Daftar Dosen')
 
 @section('content')
 <div class="container mx-auto">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Dosen Penguji</h2>
-    <a href="{{ route('admin.dosen.penguji.create') }}" class="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 mb-4 transition duration-300 ease-in-out" data-tooltip="Tambah dosen penguji baru">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Daftar Dosen</h2>
+    <a href="{{ route('admin.dosen.all.create') }}" class="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 mb-4 transition duration-300 ease-in-out" data-tooltip="Tambah dosen baru">
         <i class="fas fa-user-plus mr-2"></i> Tambah Dosen
     </a>
     @if (session('success'))
@@ -14,7 +14,7 @@
         </div>
     @endif
     @if ($dosen->isEmpty())
-        <p class="text-gray-500 italic">Belum ada dosen penguji yang terdaftar.</p>
+        <p class="text-gray-500 italic">Belum ada dosen yang terdaftar.</p>
     @else
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white shadow-lg rounded-lg overflow-hidden">
@@ -23,9 +23,8 @@
                         <th class="px-6 py-3 text-left text-sm font-semibold">No</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold">Nama</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold">NIP</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold">Email</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold">Bidang Keilmuan</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold">Pengalaman Penguji</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold">Status</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold">Action</th>
                     </tr>
                 </thead>
@@ -35,21 +34,16 @@
                             <td class="px-6 py-4 text-gray-700">{{ $index + 1 }}</td>
                             <td class="px-6 py-4 text-gray-700">{{ $item->user->name }}</td>
                             <td class="px-6 py-4 text-gray-700">{{ $item->nip }}</td>
+                            <td class="px-6 py-4 text-gray-700">{{ $item->user->email }}</td>
                             <td class="px-6 py-4 text-gray-700">{{ $item->bidangKeilmuan->name }}</td>
-                            <td class="px-6 py-4 text-gray-700">{{ $item->penguji->pengalaman_jadi_penguji }}</td>
-                            <td class="px-6 py-4 text-gray-700">{{ $item->penguji->status_aktif ? 'Aktif' : 'Tidak Aktif' }}</td>
                             <td class="px-6 py-4 flex space-x-2">
-                                <form action="{{ route('admin.dosen.penguji.toggle', $item->id) }}" method="POST" class="inline-block">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="px-3 py-1 {{ $item->penguji->status_aktif ? 'bg-green-500 hover:bg-green-600' : 'bg-yellow-500 hover:bg-yellow-600' }} text-white rounded-lg transition duration-300 ease-in-out" data-tooltip="{{ $item->penguji->status_aktif ? 'Nonaktifkan' : 'Aktifkan' }} status dosen">
-                                        <i class="fas {{ $item->penguji->status_aktif ? 'fa-toggle-on' : 'fa-toggle-off' }}"></i>
-                                    </button>
-                                </form>
-                                <form action="{{ route('admin.dosen.penguji.destroy', $item->id) }}" method="POST" class="inline-block">
+                                <a href="{{ route('admin.dosen.all.edit', $item->id) }}" class="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out" data-tooltip="Edit data dosen">
+                                    <i class="fas fa-user-edit"></i>
+                                </a>
+                                <form action="{{ route('admin.dosen.all.destroy', $item->id) }}" method="POST" class="inline-block">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300 ease-in-out" data-tooltip="Hapus dosen dari daftar penguji" onclick="return confirm('Apakah Anda yakin ingin menghapus dosen ini dari daftar penguji?')">
+                                    <button type="submit" class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300 ease-in-out" data-tooltip="Hapus dosen" onclick="return confirm('Apakah Anda yakin ingin menghapus dosen ini?')">
                                         <i class="fas fa-user-times"></i>
                                     </button>
                                 </form>
