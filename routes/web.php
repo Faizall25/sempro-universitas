@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DosenController;
 use App\Http\Controllers\Admin\JadwalController;
 use App\Http\Controllers\Admin\HasilController;
@@ -17,10 +18,17 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Rute untuk Admin
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
+    // Rute untuk Semua Dosen
+    Route::get('/dosen/all', [DosenController::class, 'allIndex'])->name('admin.dosen.all.index');
+    Route::get('/dosen/all/create', [DosenController::class, 'allCreate'])->name('admin.dosen.all.create');
+    Route::post('/dosen/all', [DosenController::class, 'allStore'])->name('admin.dosen.all.store');
+    Route::get('/dosen/all/{id}/edit', [DosenController::class, 'allEdit'])->name('admin.dosen.all.edit');
+    Route::put('/dosen/all/{id}', [DosenController::class, 'allUpdate'])->name('admin.dosen.all.update');
+    Route::delete('/dosen/all/{id}', [DosenController::class, 'allDestroy'])->name('admin.dosen.all.destroy');
+
+    // Rute untuk Dosen Pembimbing
     Route::get('/dosen/pembimbing', [DosenController::class, 'pembimbingIndex'])->name('admin.dosen.pembimbing.index');
     Route::get('/dosen/pembimbing/create', [DosenController::class, 'pembimbingCreate'])->name('admin.dosen.pembimbing.create');
     Route::post('/dosen/pembimbing', [DosenController::class, 'pembimbingStore'])->name('admin.dosen.pembimbing.store');
@@ -28,11 +36,13 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/dosen/pembimbing/{id}', [DosenController::class, 'pembimbingUpdate'])->name('admin.dosen.pembimbing.update');
     Route::delete('/dosen/pembimbing/{id}', [DosenController::class, 'pembimbingDestroy'])->name('admin.dosen.pembimbing.destroy');
 
+    // Rute untuk Dosen Penguji
     Route::get('/dosen/penguji', [DosenController::class, 'pengujiIndex'])->name('admin.dosen.penguji.index');
     Route::get('/dosen/penguji/create', [DosenController::class, 'pengujiCreate'])->name('admin.dosen.penguji.create');
     Route::post('/dosen/penguji', [DosenController::class, 'pengujiStore'])->name('admin.dosen.penguji.store');
     Route::get('/dosen/penguji/{id}/edit', [DosenController::class, 'pengujiEdit'])->name('admin.dosen.penguji.edit');
     Route::put('/dosen/penguji/{id}', [DosenController::class, 'pengujiUpdate'])->name('admin.dosen.penguji.update');
+    Route::patch('/dosen/penguji/{id}/toggle', [DosenController::class, 'pengujiToggleStatus'])->name('admin.dosen.penguji.toggle');
     Route::delete('/dosen/penguji/{id}', [DosenController::class, 'pengujiDestroy'])->name('admin.dosen.penguji.destroy');
 
     // Rute untuk Jadwal Mata Kuliah
@@ -84,7 +94,9 @@ Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
 
 // Rute Dashboard Dosen
 Route::middleware(['auth', 'role:dosen'])->group(function () {
-    Route::get('/dosen/home', [HomeController::class, 'home'])->name('dosen.home');
+    Route::get('/dosen/dashboard', function () {
+        return view('dosen.dashboard');
+    })->name('dosen.dashboard');
 });
 
 // Redirect root ke login
