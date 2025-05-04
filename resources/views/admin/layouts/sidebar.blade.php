@@ -68,12 +68,12 @@
                     </li>
                 </ul>
             </li>
-            {{-- <li>
-                <a href="#" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-200">
+            <li>
+                <a href="{{ route('admin.pengajuan-sempro.index') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-200">
                     <i class="fas fa-book"></i>
-                    <span>Sempro</span>
+                    <span>Pengajuan Sempro</span>
                 </a>
-            </li> --}}
+            </li>
             <li>
                 <a href="{{ route('admin.hasil.sempro.index') }}" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-200">
                     <i class="fas fa-file-alt"></i>
