@@ -19,7 +19,7 @@ class MahasiswaSeeder extends Seeder
 
         $mahasiswa = [
             [
-                'user_id' => 4, // Rina Amelia
+                'user_id' => 47, 
                 'nim' => '20210001',
                 'tempat_lahir' => $faker->city,
                 'tanggal_lahir' => $faker->date('Y-m-d', '2000-01-01'),
@@ -29,7 +29,7 @@ class MahasiswaSeeder extends Seeder
                 'tahun_masuk' => 2021,
             ],
             [
-                'user_id' => 5, // Ahmad Fauzi
+                'user_id' => 48, 
                 'nim' => '20210002',
                 'tempat_lahir' => $faker->city,
                 'tanggal_lahir' => $faker->date('Y-m-d', '2000-01-01'),

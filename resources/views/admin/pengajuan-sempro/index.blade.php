@@ -1,54 +1,52 @@
 @extends('admin.layouts.main')
 
-@section('title', 'Dosen Penguji')
+@section('title', 'Pengajuan Sempro')
 
 @section('content')
 <div class="container mx-auto">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Dosen Penguji</h2>
-    <a href="{{ route('admin.dosen.penguji.create') }}" class="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 mb-4 transition duration-300 ease-in-out" data-tooltip="Tambah dosen penguji baru">
-        <i class="fas fa-user-plus mr-2"></i> Tambah Dosen
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Pengajuan Sempro</h2>
+    <a href="{{ route('admin.pengajuan-sempro.create') }}" class="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 mb-4 transition duration-300 ease-in-out" data-tooltip="Tambah pengajuan sempro baru">
+        <i class="fas fa-plus mr-2"></i> Tambah Pengajuan
     </a>
     @if (session('success'))
         <div class="bg-green-50 border-l-4 border-green-400 text-green-700 p-4 mb-4 rounded-lg shadow-sm" role="alert">
             {{ session('success') }}
         </div>
     @endif
-    @if ($dosen->isEmpty())
-        <p class="text-gray-500 italic">Belum ada dosen penguji yang terdaftar.</p>
+    @if ($pengajuanSempro->isEmpty())
+        <p class="text-gray-500 italic">Belum ada pengajuan sempro yang terdaftar.</p>
     @else
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white shadow-lg rounded-lg overflow-hidden">
                 <thead class="bg-blue-900 text-white">
                     <tr>
                         <th class="px-6 py-3 text-left text-sm font-semibold">No</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold">Nama</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold">NIP</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold">Mahasiswa</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold">Judul</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold">Bidang Keilmuan</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold">Pembimbing</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold">Status</th>
                         <th class="px-6 py-3 text-left text-sm font-semibold">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($dosen as $index => $item)
+                    @foreach ($pengajuanSempro as $index => $item)
                         <tr class="border-b border-gray-200 hover:bg-gray-100 transition duration-200 ease-in-out">
                             <td class="px-6 py-4 text-gray-700">{{ $index + 1 }}</td>
-                            <td class="px-6 py-4 text-gray-700">{{ $item->user->name }}</td>
-                            <td class="px-6 py-4 text-gray-700">{{ $item->nip }}</td>
+                            <td class="px-6 py-4 text-gray-700">{{ $item->mahasiswa->user->name }}</td>
+                            <td class="px-6 py-4 text-gray-700">{{ Str::limit($item->judul, 50) }}</td>
                             <td class="px-6 py-4 text-gray-700">{{ $item->bidangKeilmuan->name }}</td>
-                            <td class="px-6 py-4 text-gray-700">{{ $item->penguji->status_aktif ? 'Aktif' : 'Tidak Aktif' }}</td>
+                            <td class="px-6 py-4 text-gray-700">{{ $item->dosenPembimbing->user->name }}</td>
+                            <td class="px-6 py-4 text-gray-700">{{ ucfirst($item->status) }}</td>
                             <td class="px-6 py-4 flex space-x-2">
-                                <form action="{{ route('admin.dosen.penguji.toggle', $item->id) }}" method="POST" class="inline-block">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="px-3 py-1 {{ $item->penguji->status_aktif ? 'bg-green-500 hover:bg-green-600' : 'bg-yellow-500 hover:bg-yellow-600' }} text-white rounded-lg transition duration-300 ease-in-out" data-tooltip="{{ $item->penguji->status_aktif ? 'Nonaktifkan' : 'Aktifkan' }} status dosen">
-                                        <i class="fas {{ $item->penguji->status_aktif ? 'fa-toggle-on' : 'fa-toggle-off' }}"></i>
-                                    </button>
-                                </form>
-                                <form action="{{ route('admin.dosen.penguji.destroy', $item->id) }}" method="POST" class="inline-block">
+                                <a href="{{ route('admin.pengajuan-sempro.edit', $item->id) }}" class="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out" data-tooltip="Edit pengajuan">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('admin.pengajuan-sempro.destroy', $item->id) }}" method="POST" class="inline-block">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300 ease-in-out" data-tooltip="Hapus dosen dari daftar penguji" onclick="return confirm('Apakah Anda yakin ingin menghapus dosen ini dari daftar penguji?')">
-                                        <i class="fas fa-user-times"></i>
+                                    <button type="submit" class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300 ease-in-out" data-tooltip="Hapus pengajuan" onclick="return confirm('Apakah Anda yakin ingin menghapus pengajuan ini?')">
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
                             </td>

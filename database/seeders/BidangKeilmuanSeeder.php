@@ -2,25 +2,29 @@
 
 namespace Database\Seeders;
 
-use App\Models\BidangKeilmuan;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\BidangKeilmuan;
 
 class BidangKeilmuanSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     *
+     * @return void
      */
-    public function run(): void
+    public function run()
     {
-        $bidang = [
-            ['name' => 'Sistem Informasi'],
-            ['name' => 'Kecerdasan Buatan'],
-            ['name' => 'Jaringan Komputer'],
-            ['name' => 'Neuro Linguistic Program'],
-            ['name' => 'Rekayasa Perangkat Lunak'],
+        $bidangKeilmuan = [
+            ['name' => 'Web & Mobile Programming'],
+            ['name' => 'Multimedia & Teknologi Informasi'],
+            ['name' => 'Information System'],
+            ['name' => 'Software Engineering'],
+            ['name' => 'Intelligent System'],
+            ['name' => 'System & Network'],
         ];
 
-        BidangKeilmuan::insert($bidang);
+        foreach ($bidangKeilmuan as $bidang) {
+            BidangKeilmuan::create($bidang);
+        }
     }
 }

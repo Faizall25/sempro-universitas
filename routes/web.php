@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DosenController;
 use App\Http\Controllers\Admin\JadwalController;
 use App\Http\Controllers\Admin\HasilController;
+use App\Http\Controllers\Admin\SemproController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Mahasiswa\HomeController;
 use App\Http\Controllers\Mahasiswa\PengajuanSemproController;
@@ -59,6 +60,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/jadwal/sempro/{id}/edit', [JadwalController::class, 'semproEdit'])->name('admin.jadwal.sempro.edit');
     Route::put('/jadwal/sempro/{id}', [JadwalController::class, 'semproUpdate'])->name('admin.jadwal.sempro.update');
     Route::delete('/jadwal/sempro/{id}', [JadwalController::class, 'semproDestroy'])->name('admin.jadwal.sempro.destroy');
+    Route::get('jadwal/dosen/{dosenId}/jadwal', [JadwalController::class, 'getDosenJadwal'])->name('admin.jadwal.dosen.jadwal');
 
     // Rute untuk Hasil Sempro
     Route::get('/hasil/sempro', [HasilController::class, 'index'])->name('admin.hasil.sempro.index');
@@ -67,6 +69,13 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/hasil/sempro/{id}/edit', [HasilController::class, 'edit'])->name('admin.hasil.sempro.edit');
     Route::put('/hasil/sempro/{id}', [HasilController::class, 'update'])->name('admin.hasil.sempro.update');
     Route::delete('/hasil/sempro/{id}', [HasilController::class, 'destroy'])->name('admin.hasil.sempro.destroy');
+
+    Route::get('pengajuan-sempro', [SemproController::class, 'index'])->name('admin.pengajuan-sempro.index');
+    Route::get('pengajuan-sempro/create', [SemproController::class, 'create'])->name('admin.pengajuan-sempro.create');
+    Route::post('pengajuan-sempro', [SemproController::class, 'store'])->name('admin.pengajuan-sempro.store');
+    Route::get('pengajuan-sempro/{id}/edit', [SemproController::class, 'edit'])->name('admin.pengajuan-sempro.edit');
+    Route::put('pengajuan-sempro/{id}', [SemproController::class, 'update'])->name('admin.pengajuan-sempro.update');
+    Route::delete('pengajuan-sempro/{id}', [SemproController::class, 'destroy'])->name('admin.pengajuan-sempro.destroy');
 });
 
 // Rute Dashboard Mahasiswa

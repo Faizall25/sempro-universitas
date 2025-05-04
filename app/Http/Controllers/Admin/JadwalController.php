@@ -97,8 +97,8 @@ class JadwalController extends Controller
     public function semproCreate()
     {
         // Hanya ambil pengajuan sempro yang belum dijadwalkan
-        $pengajuanSemproList = PengajuanSempro::whereNotIn('id', JadwalSempro::pluck('pengajuan_sempro_id'))->get();
-        $dosenList = Dosen::has('penguji')->get();
+        $pengajuanSemproList = PengajuanSempro::whereNotIn('id', JadwalSempro::pluck('pengajuan_sempro_id'))->with('bidangKeilmuan')->get();
+        $dosenList = Dosen::has('penguji')->with('bidangKeilmuan')->get();
         return view('admin.jadwal.sempro.create', compact('pengajuanSemproList', 'dosenList'));
     }
 
@@ -119,6 +119,17 @@ class JadwalController extends Controller
             'status' => 'required|in:dijadwalkan,selesai',
         ]);
 
+        $pengajuan = PengajuanSempro::findOrFail($request->pengajuan_sempro_id);
+        $bidangKeilmuanId = $pengajuan->bidang_keilmuan_id;
+
+        // Validasi bahwa semua dosen penguji memiliki bidang keilmuan yang sama
+        foreach (['dosen_penguji_1', 'dosen_penguji_2', 'dosen_penguji_3'] as $field) {
+            $dosen = Dosen::findOrFail($request->$field);
+            if ($dosen->bidang_keilmuan_id !== $bidangKeilmuanId) {
+                return back()->withErrors([$field => 'Dosen penguji harus memiliki bidang keilmuan yang sama dengan pengajuan sempro.']);
+            }
+        }
+
         JadwalSempro::create($request->all());
 
         return redirect()->route('admin.jadwal.sempro.index')
@@ -130,8 +141,9 @@ class JadwalController extends Controller
         $jadwal = JadwalSempro::findOrFail($id);
         // Ambil pengajuan sempro yang belum dijadwalkan, tapi sertakan pengajuan sempro saat ini
         $pengajuanSemproList = PengajuanSempro::whereNotIn('id', JadwalSempro::where('id', '!=', $id)->pluck('pengajuan_sempro_id'))
+            ->with('bidangKeilmuan')
             ->get();
-        $dosenList = Dosen::has('penguji')->get();
+        $dosenList = Dosen::has('penguji')->with('bidangKeilmuan')->get();
         return view('admin.jadwal.sempro.edit', compact('jadwal', 'pengajuanSemproList', 'dosenList'));
     }
 
@@ -154,6 +166,17 @@ class JadwalController extends Controller
             'status' => 'required|in:dijadwalkan,selesai',
         ]);
 
+        $pengajuan = PengajuanSempro::findOrFail($request->pengajuan_sempro_id);
+        $bidangKeilmuanId = $pengajuan->bidang_keilmuan_id;
+
+        // Validasi bahwa semua dosen penguji memiliki bidang keilmuan yang sama
+        foreach (['dosen_penguji_1', 'dosen_penguji_2', 'dosen_penguji_3'] as $field) {
+            $dosen = Dosen::findOrFail($request->$field);
+            if ($dosen->bidang_keilmuan_id !== $bidangKeilmuanId) {
+                return back()->withErrors([$field => 'Dosen penguji harus memiliki bidang keilmuan yang sama dengan pengajuan sempro.']);
+            }
+        }
+
         $jadwal->update($request->all());
 
         return redirect()->route('admin.jadwal.sempro.index')
@@ -167,5 +190,11 @@ class JadwalController extends Controller
 
         return redirect()->route('admin.jadwal.sempro.index')
             ->with('success', 'Jadwal sempro berhasil dihapus.');
+    }
+
+    public function getDosenJadwal($dosenId)
+    {
+        $jadwal = JadwalMataKuliah::where('dosen_id', $dosenId)->get(['hari', 'pukul', 'mata_kuliah', 'ruang']);
+        return response()->json($jadwal);
     }
 }
