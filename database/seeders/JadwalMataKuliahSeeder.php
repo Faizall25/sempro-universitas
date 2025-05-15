@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\JadwalMataKuliah;
 use App\Models\Dosen;
-use Carbon\Carbon;
 
 class JadwalMataKuliahSeeder extends Seeder
 {

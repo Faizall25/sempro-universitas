@@ -28,7 +28,7 @@
                                 @if (!$dosen->pembimbing)
                                     <option value="{{ $dosen->id }}">
                                         {{ $dosen->user->name }} (NIP: {{ $dosen->nip }})
-                                        {{ $dosen->penguji ? '[Sudah Penguji]' : '' }}
+                                        {{ $dosen->bidangKeilmuan->name ?? 'Tidak ada bidang keilmuan' }}
                                     </option>
                                 @endif
                             @endforeach

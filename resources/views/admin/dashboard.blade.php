@@ -22,7 +22,7 @@
                 </div>
                 <div class="ml-4">
                     <h3 class="text-lg font-semibold text-gray-700">Mahasiswa</h3>
-                    {{-- <p class="text-2xl font-bold text-gray-800">{{ $totalMahasiswa }}</p> --}}
+                    <p class="text-2xl font-bold text-gray-800">{{ $totalMahasiswa }}</p>
                 </div>
             </div>
         </div>
@@ -35,7 +35,7 @@
                 </div>
                 <div class="ml-4">
                     <h3 class="text-lg font-semibold text-gray-700">Dosen</h3>
-                    {{-- <p class="text-2xl font-bold text-gray-800">{{ $totalDosen }}</p> --}}
+                    <p class="text-2xl font-bold text-gray-800">{{ $totalDosen }}</p>
                 </div>
             </div>
         </div>
@@ -48,7 +48,7 @@
                 </div>
                 <div class="ml-4">
                     <h3 class="text-lg font-semibold text-gray-700">Pengajuan Sempro</h3>
-                    {{-- <p class="text-2xl font-bold text-gray-800">{{ $totalPengajuan }}</p> --}}
+                    <p class="text-2xl font-bold text-gray-800">{{ $totalPengajuan }}</p>
                 </div>
             </div>
         </div>
@@ -61,7 +61,7 @@
                 </div>
                 <div class="ml-4">
                     <h3 class="text-lg font-semibold text-gray-700">Jadwal Sempro</h3>
-                    {{-- <p class="text-2xl font-bold text-gray-800">{{ $totalJadwal }}</p> --}}
+                    <p class="text-2xl font-bold text-gray-800">{{ $totalJadwal }}</p>
                 </div>
             </div>
         </div>
@@ -74,7 +74,7 @@
                 </div>
                 <div class="ml-4">
                     <h3 class="text-lg font-semibold text-gray-700">Hasil Sempro</h3>
-                    {{-- <p class="text-2xl font-bold text-gray-800">{{ $totalHasil }}</p> --}}
+                    <p class="text-2xl font-bold text-gray-800">{{ $totalHasil }}</p>
                 </div>
             </div>
         </div>

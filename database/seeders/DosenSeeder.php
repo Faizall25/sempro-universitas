@@ -6,7 +6,6 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Dosen;
 use App\Models\BidangKeilmuan;
-use Illuminate\Support\Str;
 
 class DosenSeeder extends Seeder
 {

@@ -85,6 +85,9 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div class="mt-4">
+                    {{ $hasil->appends(['search' => $search])->links() }}
+                </div>
             </div>
         @endif
     </div>

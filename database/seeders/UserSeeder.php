@@ -9,11 +9,6 @@ use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
         // Daftar dosen unik dari data jadwal
@@ -86,7 +81,7 @@ class UserSeeder extends Seeder
 
         // Membuat akun mahasiswa
         User::create([
-            'name' => 'Mahasiswa Contoh',
+            'name' => 'Mahasiswa Satu',
             'email' => 'mahasiswa@uinmalang.com',
             'password' => Hash::make('password'),
             'role' => 'mahasiswa',

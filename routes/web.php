@@ -62,6 +62,15 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/jadwal/sempro/{id}', [JadwalController::class, 'semproDestroy'])->name('admin.jadwal.sempro.destroy');
     Route::get('jadwal/dosen/{dosenId}/jadwal', [JadwalController::class, 'getDosenJadwal'])->name('admin.jadwal.dosen.jadwal');
 
+    // Routes untuk Jadwal Sempro Approval
+    Route::get('/jadwal/sempro/approval/create', [JadwalController::class, 'approvalCreate'])->name('admin.jadwal.sempro.approval.create');
+    Route::post('/jadwal/sempro/approval', [JadwalController::class, 'approvalStore'])->name('admin.jadwal.sempro.approval.store');
+    Route::get('/jadwal/sempro/approval/{id}/edit', [JadwalController::class, 'approvalEdit'])->name('admin.jadwal.sempro.approval.edit');
+    Route::put('/jadwal/sempro/approval/{id}', [JadwalController::class, 'approvalUpdate'])->name('admin.jadwal.sempro.approval.update');
+    Route::delete('/jadwal/sempro/approval/{id}', [JadwalController::class, 'approvalDestroy'])->name('admin.jadwal.sempro.approval.destroy');
+    Route::get('/jadwal/sempro/{jadwal}/penguji/{penguji}/edit', [JadwalController::class, 'editPenguji'])->name('admin.jadwal.sempro.approval.edit.penguji');
+    Route::put('/jadwal/sempro/{jadwal}/penguji/{penguji}', [JadwalController::class, 'updatePenguji'])->name('admin.jadwal.sempro.approval.update.penguji');
+    
     // Rute untuk Hasil Sempro
     Route::get('/hasil/sempro', [HasilController::class, 'index'])->name('admin.hasil.sempro.index');
     Route::get('/hasil/sempro/create', [HasilController::class, 'create'])->name('admin.hasil.sempro.create');

@@ -51,8 +51,13 @@
 
                 <div class="mb-4">
                     <label for="waktu" class="block text-gray-700 font-medium mb-2">Waktu</label>
-                    <input type="time" id="waktu" name="waktu" value="{{ old('waktu') }}"
+                    <select id="waktu" name="waktu"
                         class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        <option value="" {{ old('waktu') == '' ? 'selected' : '' }}>-- Pilih Waktu --</option>
+                        <option value="12:00" {{ old('waktu') == '12:00' ? 'selected' : '' }}>12:00 - 13:00</option>
+                        <option value="13:00" {{ old('waktu') == '13:00' ? 'selected' : '' }}>13:00 - 14:00</option>
+                        <option value="14:00" {{ old('waktu') == '14:00' ? 'selected' : '' }}>14:00 - 15:00</option>
+                    </select>
                     @error('waktu')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
@@ -89,7 +94,8 @@
                         @foreach ($dosenList as $dosen)
                             <option value="{{ $dosen->id }}" data-bidang-id="{{ $dosen->bidang_keilmuan_id }}"
                                 {{ old('dosen_penguji_1') == $dosen->id ? 'selected' : '' }}>{{ $dosen->user->name }}
-                                ({{ $dosen->bidangKeilmuan->name }})</option>
+                                ({{ $dosen->bidangKeilmuan->name }})
+                            </option>
                         @endforeach
                     </select>
                     @error('dosen_penguji_1')
@@ -119,7 +125,8 @@
                         @foreach ($dosenList as $dosen)
                             <option value="{{ $dosen->id }}" data-bidang-id="{{ $dosen->bidang_keilmuan_id }}"
                                 {{ old('dosen_penguji_2') == $dosen->id ? 'selected' : '' }}>{{ $dosen->user->name }}
-                                ({{ $dosen->bidangKeilmuan->name }})</option>
+                                ({{ $dosen->bidangKeilmuan->name }})
+                            </option>
                         @endforeach
                     </select>
                     @error('dosen_penguji_2')
@@ -149,7 +156,8 @@
                         @foreach ($dosenList as $dosen)
                             <option value="{{ $dosen->id }}" data-bidang-id="{{ $dosen->bidang_keilmuan_id }}"
                                 {{ old('dosen_penguji_3') == $dosen->id ? 'selected' : '' }}>{{ $dosen->user->name }}
-                                ({{ $dosen->bidangKeilmuan->name }})</option>
+                                ({{ $dosen->bidangKeilmuan->name }})
+                            </option>
                         @endforeach
                     </select>
                     @error('dosen_penguji_3')
@@ -221,7 +229,8 @@
                 .then(data => {
                     tableBody.innerHTML = '';
                     if (data.length === 0) {
-                        tableBody.innerHTML = '<tr><td colspan="4" class="border border-gray-300 px-4 py-2 text-center">Tidak ada jadwal</td></tr>';
+                        tableBody.innerHTML =
+                            '<tr><td colspan="4" class="border border-gray-300 px-4 py-2 text-center">Tidak ada jadwal</td></tr>';
                     } else {
                         data.forEach(jadwal => {
                             const row = `
@@ -239,7 +248,8 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    tableBody.innerHTML = '<tr><td colspan="4" class="border border-gray-300 px-4 py-2 text-center">Gagal memuat jadwal</td></tr>';
+                    tableBody.innerHTML =
+                        '<tr><td colspan="4" class="border border-gray-300 px-4 py-2 text-center">Gagal memuat jadwal</td></tr>';
                     table.classList.remove('hidden');
                 });
         }
@@ -250,7 +260,8 @@
             ['dosen_penguji_1', 'dosen_penguji_2', 'dosen_penguji_3'].forEach(id => {
                 const select = document.getElementById(id);
                 if (select.value) {
-                    loadJadwalDosen(select, `jadwal_${id.split('_').pop()}`, `jadwal_${id.split('_').pop()}_body`);
+                    loadJadwalDosen(select, `jadwal_${id.split('_').pop()}`,
+                        `jadwal_${id.split('_').pop()}_body`);
                 }
             });
         });

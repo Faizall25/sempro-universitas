@@ -27,8 +27,8 @@
                             @foreach ($dosenList as $dosen)
                                 @if (!$dosen->penguji)
                                     <option value="{{ $dosen->id }}">
-                                        {{ $dosen->user->name }} (NIP: {{ $dosen->nip }})
-                                        {{ $dosen->pembimbing ? '[Sudah Pembimbing]' : '' }}
+                                        {{ $dosen->user->name }} (NIP: {{ $dosen->nip }}) -
+                                        {{ $dosen->bidangKeilmuan->name ?? 'Tidak ada bidang keilmuan' }}
                                     </option>
                                 @endif
                             @endforeach

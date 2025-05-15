@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Dosen;
 use App\Models\BidangKeilmuan;
 use App\Models\DosenPenguji;
-use App\Models\DosenPembimbing;
+use Illuminate\Support\Facades\Log;
 
 class DosenPengujiSeeder extends Seeder
 {
@@ -30,17 +30,16 @@ class DosenPengujiSeeder extends Seeder
                 continue; // Lewati jika bidang keilmuan tidak ditemukan
             }
 
-            // Ambil dosen yang bukan pembimbing untuk bidang keilmuan ini
-            $pembimbingIds = DosenPembimbing::whereIn('dosen_id', Dosen::where('bidang_keilmuan_id', $bidang->id)->pluck('id'))
-                ->pluck('dosen_id')
-                ->toArray();
-
-            // Ambil 3 dosen dengan bidang keilmuan yang sesuai, bukan pembimbing
+            // Ambil 3 dosen dengan bidang keilmuan yang sesuai (termasuk yang sudah pembimbing)
             $dosenList = Dosen::where('bidang_keilmuan_id', $bidang->id)
-                ->whereNotIn('id', $pembimbingIds)
                 ->inRandomOrder()
                 ->take(3)
                 ->get();
+
+            if ($dosenList->count() < 3) {
+                Log::warning("Hanya {$dosenList->count()} dosen ditemukan untuk bidang keilmuan {$bidangName}. Dibutuhkan minimal 3 dosen.");
+                continue; // Lewati jika tidak cukup dosen
+            }
 
             foreach ($dosenList as $dosen) {
                 DosenPenguji::create([

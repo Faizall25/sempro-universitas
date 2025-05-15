@@ -7,11 +7,6 @@ use App\Models\BidangKeilmuan;
 
 class BidangKeilmuanSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
         $bidangKeilmuan = [
