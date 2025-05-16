@@ -6,11 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Dosen;
 use Illuminate\Http\Request;
 
-class HomeController extends Controller
+class DosenHomeController extends Controller
 {
     public function home()
     {
-        $mahasiswa = Dosen::with('user')->get();
+        $dosen = Dosen::with('user')->get();
         return view('dosen.home', compact('dosen'));
     }
 }

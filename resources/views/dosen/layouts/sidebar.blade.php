@@ -17,15 +17,21 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('dosen.profile') }}" class="flex items-center space-x-3 p-2 rounded-lg  {{ request()->routeIs('dosen.profile') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
+                <a href="{{ route('dosen.profile') }}" class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('dosen.profile*') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
                     <i class="fas fa-user-alt"></i>
                     <span>Profile</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('dosen.profile') }}" class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('dosen.profile') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
+                <a href="{{ route('dosen.informasi_pengajuan.index') }}" class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('dosen.informasi_pengajuan.index') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
                     <i class="fas fa-calendar"></i>
-                    <span>Pengajuan Proposal</span>
+                    <span>Informasi Pengajuan</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('dosen.jadwal_perkuliahan.index') }}" class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('dosen.jadwal_perkuliahan.index') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
+                    <i class="fas fa-book"></i>
+                    <span>Jadwal Perkuliahan</span>
                 </a>
             </li>
         </ul>

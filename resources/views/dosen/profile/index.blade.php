@@ -12,17 +12,17 @@
 
             <!-- Detail Profil -->
             <div class="md:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-700">
-                <x-profile-field label="Angkatan" :value="$mahasiswa->tahun_masuk" />
-                <x-profile-field label="NIM" :value="$mahasiswa->nim" />
-                <x-profile-field label="Nama Mahasiswa" :value="$mahasiswa->user->name" />
-                <x-profile-field label="Tempat Lahir" :value="$mahasiswa->tempat_lahir" />
-                <x-profile-field label="Tanggal Lahir" :value="$mahasiswa->tanggal_lahir->format('d M Y')" />
-                <x-profile-field label="Email Pribadi" :value="$mahasiswa->user->email" />
-                <x-profile-field label="Asal Kota" :value="$mahasiswa->asal_kota" />
+                <x-profile-field label="Angkatan" :value="$dosen->tahun_masuk" />
+                <x-profile-field label="NIM" :value="$dosen->nim" />
+                <x-profile-field label="Nama dosen" :value="$dosen->user->name" />
+                <x-profile-field label="Tempat Lahir" :value="$dosen->tempat_lahir" />
+                <x-profile-field label="Tanggal Lahir" :value="$dosen->tanggal_lahir->format('d M Y')" />
+                <x-profile-field label="Email Pribadi" :value="$dosen->user->email" />
+                <x-profile-field label="Asal Kota" :value="$dosen->asal_kota" />
                 {{-- <x-profile-field label="Nama Orang Tua" value="Tidak Tersedia" /> --}}
                 {{-- <x-profile-field label="Alamat Orang Tua" value="Tidak Tersedia" /> --}}
-                {{-- <x-profile-field label="Propinsi Orang Tua" :value="$mahasiswa->asal_kota" /> --}}
-                {{-- <x-profile-field label="Kota Orang Tua" :value="$mahasiswa->asal_kota" /> --}}
+                {{-- <x-profile-field label="Propinsi Orang Tua" :value="$dosen->asal_kota" /> --}}
+                {{-- <x-profile-field label="Kota Orang Tua" :value="$dosen->asal_kota" /> --}}
             </div>
         </div>
 
@@ -45,8 +45,8 @@
             @csrf
             @method('PUT')
 
-            <x-input-field name="name" label="Nama" :value="$mahasiswa->user->name" required />
-            <x-input-field name="email" label="Email (@student.com)" type="email" :value="$mahasiswa->user->email" required />
+            <x-input-field name="name" label="Nama" :value="$dosen->user->name" required />
+            <x-input-field name="email" label="Email (@universitas.com)" type="email" :value="$dosen->user->email" required />
             <x-input-field name="password" label="Password Baru" type="password" />
             <x-input-field name="password_confirmation" label="Konfirmasi Password" type="password" />
 

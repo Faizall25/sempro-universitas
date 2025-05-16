@@ -88,10 +88,10 @@
 
     <!-- Navigasi Cepat -->
     <div class="flex space-x-4 mb-8">
-        <a href="{{ route('admin.dashboard') }}" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
+        <a href="{{ route('admin.jadwal.sempro.index') }}" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
             <i class="fas fa-calendar mr-2"></i> Kelola Jadwal Sempro
         </a>
-        <a href="{{ route('admin.dashboard') }}" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
+        <a href="{{ route('admin.hasil.sempro.index') }}" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
             <i class="fas fa-file-alt mr-2"></i> Kelola Hasil Sempro
         </a>
     </div>
