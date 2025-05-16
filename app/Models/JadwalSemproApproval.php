@@ -9,6 +9,8 @@ class JadwalSemproApproval extends Model
 {
     use HasFactory;
 
+    protected $table = 'jadwal_sempro_approvals';
+
     protected $fillable = [
         'jadwal_sempro_id',
         'dosen_id',
@@ -17,16 +19,23 @@ class JadwalSemproApproval extends Model
     ];
 
     protected $casts = [
+        'status' => 'string', // Enum: 'pending', 'setuju', 'tolak'
         'approved_at' => 'datetime',
     ];
 
+    /**
+     * Relasi ke JadwalSempro
+     */
     public function jadwalSempro()
     {
-        return $this->belongsTo(JadwalSempro::class);
+        return $this->belongsTo(JadwalSempro::class, 'jadwal_sempro_id');
     }
 
+    /**
+     * Relasi ke Dosen
+     */
     public function dosen()
     {
-        return $this->belongsTo(Dosen::class);
+        return $this->belongsTo(Dosen::class, 'dosen_id');
     }
 }

@@ -11,10 +11,23 @@ use Illuminate\Validation\Rule;
 
 class HasilController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $hasil = HasilSempro::with('jadwalSempro.pengajuanSempro')->get();
-        return view('admin.hasil.index', compact('hasil'));
+        $search = $request->query('search');
+        $hasil = HasilSempro::with(['jadwalSempro.pengajuanSempro.mahasiswa.user'])
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('jadwalSempro.pengajuanSempro', function ($q) use ($search) {
+                        $q->where('judul', 'like', "%{$search}%")
+                            ->orWhereHas('mahasiswa.user', function ($q) use ($search) {
+                                $q->where('name', 'like', "%{$search}%");
+                            });
+                    })
+                        ->orWhere('status', 'like', "%{$search}%");
+                });
+            })
+            ->paginate(10); // Add pagination
+        return view('admin.hasil.index', compact('hasil', 'search'));
     }
 
     public function create()

@@ -14,10 +14,24 @@ use Illuminate\Support\Facades\Hash;
 class DosenController extends Controller
 {
     // CRUD untuk Semua Dosen
-    public function allIndex()
+    public function allIndex(Request $request)
     {
-        $dosen = Dosen::with(['user', 'bidangKeilmuan'])->get();
-        return view('admin.dosen.all.index', compact('dosen'));
+        $search = $request->query('search');
+        $dosen = Dosen::with(['user', 'bidangKeilmuan'])
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    })
+                        ->orWhere('nip', 'like', "%{$search}%")
+                        ->orWhereHas('bidangKeilmuan', function ($q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->paginate(10); // Add pagination
+        return view('admin.dosen.all.index', compact('dosen', 'search'));
     }
 
     public function allCreate()
@@ -116,10 +130,28 @@ class DosenController extends Controller
     }
 
     // CRUD untuk Dosen Pembimbing
-    public function pembimbingIndex()
+    public function pembimbingIndex(Request $request)
     {
-        $dosen = Dosen::with('pembimbing')->has('pembimbing')->get();
-        return view('admin.dosen.pembimbing.index', compact('dosen'));
+        $search = $request->query('search');
+        $dosen = Dosen::with(['pembimbing', 'user', 'bidangKeilmuan'])
+            ->has('pembimbing')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    })
+                        ->orWhere('nip', 'like', "%{$search}%")
+                        ->orWhereHas('bidangKeilmuan', function ($q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('pembimbing', function ($q) use ($search) {
+                            $q->where('kapasitas_maksimum', 'like', "%{$search}%")
+                                ->orWhere('status_aktif', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->paginate(10); // Add pagination
+        return view('admin.dosen.pembimbing.index', compact('dosen', 'search'));
     }
 
     public function pembimbingCreate()
@@ -185,10 +217,28 @@ class DosenController extends Controller
     }
 
     // CRUD untuk Dosen Penguji
-    public function pengujiIndex()
+    public function pengujiIndex(Request $request)
     {
-        $dosen = Dosen::with('penguji')->has('penguji')->get();
-        return view('admin.dosen.penguji.index', compact('dosen'));
+        $search = $request->query('search');
+        $dosen = Dosen::with(['penguji', 'user', 'bidangKeilmuan'])
+            ->has('penguji')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    })
+                        ->orWhere('nip', 'like', "%{$search}%")
+                        ->orWhereHas('bidangKeilmuan', function ($q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('penguji', function ($q) use ($search) {
+                            $q->where('pengalaman_jadi_penguji', 'like', "%{$search}%")
+                                ->orWhere('status_aktif', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->paginate(10); // Add pagination
+        return view('admin.dosen.penguji.index', compact('dosen', 'search'));
     }
 
     public function pengujiCreate()

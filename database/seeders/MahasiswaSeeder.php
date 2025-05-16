@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Mahasiswa;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
@@ -10,16 +9,13 @@ use Faker\Factory as Faker;
 
 class MahasiswaSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $faker = Faker::create('id_ID');
 
         $mahasiswa = [
             [
-                'user_id' => 4, // Rina Amelia
+                'user_id' => 47, 
                 'nim' => '20210001',
                 'tempat_lahir' => $faker->city,
                 'tanggal_lahir' => $faker->date('Y-m-d', '2000-01-01'),
@@ -29,7 +25,7 @@ class MahasiswaSeeder extends Seeder
                 'tahun_masuk' => 2021,
             ],
             [
-                'user_id' => 5, // Ahmad Fauzi
+                'user_id' => 48, 
                 'nim' => '20210002',
                 'tempat_lahir' => $faker->city,
                 'tanggal_lahir' => $faker->date('Y-m-d', '2000-01-01'),

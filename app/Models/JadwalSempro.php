@@ -49,4 +49,12 @@ class JadwalSempro extends Model
     {
         return $this->hasOne(HasilSempro::class);
     }
+
+    /**
+     * Relasi ke JadwalSemproApproval
+     */
+    public function approvals()
+    {
+        return $this->hasMany(JadwalSemproApproval::class, 'jadwal_sempro_id');
+    }
 }
