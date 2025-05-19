@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\JadwalSempro;
-use App\Models\JadwalSemproApproval;
 use App\Models\Dosen;
 use App\Models\DosenPenguji;
+use App\Models\JadwalSempro;
+use App\Models\JadwalSemproApproval;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -13,74 +13,88 @@ class JadwalSemproSeeder extends Seeder
 {
     public function run(): void
     {
-        // Ambil dosen penguji untuk bidang keilmuan ID 1 (Web & Mobile Programming)
-        $dosenBidang1 = Dosen::where('bidang_keilmuan_id', 1)
-            ->whereIn('id', DosenPenguji::pluck('dosen_id'))
-            ->inRandomOrder()
-            ->take(3)
-            ->pluck('id')
-            ->toArray();
-
-        // Ambil dosen penguji untuk bidang keilmuan ID 5 (Intelligent System)
-        $dosenBidang5 = Dosen::where('bidang_keilmuan_id', 5)
-            ->whereIn('id', DosenPenguji::pluck('dosen_id'))
-            ->inRandomOrder()
-            ->take(3)
-            ->pluck('id')
-            ->toArray();
-
-        // Pastikan ada cukup dosen untuk masing-masing bidang
-        if (count($dosenBidang1) < 3 || count($dosenBidang5) < 3) {
-            throw new \Exception('Tidak cukup dosen penguji untuk bidang keilmuan ID 1 atau 5. Pastikan DosenPengujiSeeder telah menambahkan dosen yang sesuai.');
-        }
-
-        $jadwal = [
-            [
-                'pengajuan_sempro_id' => 1, // Pengajuan Mahasiswa 1
-                'tanggal' => '2025-06-01',
-                'waktu' => '12:00:00',
-                'ruang' => 'Ruang Seminar 1',
-                'dosen_penguji_1' => $dosenBidang1[0],
-                'dosen_penguji_2' => $dosenBidang1[1],
-                'dosen_penguji_3' => $dosenBidang1[2],
-                'status' => 'dijadwalkan',
-            ],
-            [
-                'pengajuan_sempro_id' => 2, // Pengajuan Mahasiswa 2
-                'tanggal' => '2025-06-02',
-                'waktu' => '14:00:00',
-                'ruang' => 'Ruang Seminar 2',
-                'dosen_penguji_1' => $dosenBidang5[0],
-                'dosen_penguji_2' => $dosenBidang5[1],
-                'dosen_penguji_3' => $dosenBidang5[2],
-                'status' => 'dijadwalkan',
-            ],
+        // Define schedule details: dates, times, and rooms
+        $scheduleDetails = [
+            ['tanggal' => '2025-06-01', 'waktu' => '09:00:00', 'ruang' => 'Ruang Seminar 1'],
+            ['tanggal' => '2025-06-01', 'waktu' => '13:00:00', 'ruang' => 'Ruang Seminar 2'],
+            ['tanggal' => '2025-06-02', 'waktu' => '10:00:00', 'ruang' => 'Ruang Seminar 3'],
+            ['tanggal' => '2025-06-02', 'waktu' => '14:00:00', 'ruang' => 'Ruang Seminar 1'],
+            ['tanggal' => '2025-06-03', 'waktu' => '08:30:00', 'ruang' => 'Ruang Seminar 2'],
+            ['tanggal' => '2025-06-03', 'waktu' => '11:30:00', 'ruang' => 'Ruang Seminar 3'],
+            ['tanggal' => '2025-06-04', 'waktu' => '09:30:00', 'ruang' => 'Ruang Seminar 1'],
+            ['tanggal' => '2025-06-04', 'waktu' => '13:30:00', 'ruang' => 'Ruang Seminar 2'],
+            ['tanggal' => '2025-06-05', 'waktu' => '10:30:00', 'ruang' => 'Ruang Seminar 3'],
+            ['tanggal' => '2025-06-05', 'waktu' => '15:00:00', 'ruang' => 'Ruang Seminar 1'],
         ];
+
+        $jadwal = [];
+        foreach (range(1, 10) as $index) {
+            $pengajuan = \App\Models\PengajuanSempro::find($index);
+            if (!$pengajuan) {
+                throw new \Exception("PengajuanSempro ID {$index} tidak ditemukan.");
+            }
+
+            // Get supervisor ID to avoid assigning them as examiners
+            $dosenPembimbingId = $pengajuan->dosen_pembimbing_id;
+
+            // Get 3 examiners for the bidang keilmuan, excluding the supervisor
+            $dosenPenguji = Dosen::where('bidang_keilmuan_id', $pengajuan->bidang_keilmuan_id)
+                ->whereIn('id', DosenPenguji::pluck('dosen_id'))
+                ->where('id', '!=', $dosenPembimbingId)
+                ->inRandomOrder()
+                ->take(3)
+                ->pluck('id')
+                ->toArray();
+
+            if (count($dosenPenguji) < 3) {
+                throw new \Exception("Tidak cukup dosen penguji untuk bidang keilmuan ID {$pengajuan->bidang_keilmuan_id}.");
+            }
+
+            $jadwal[] = [
+                'pengajuan_sempro_id' => $index,
+                'tanggal' => $scheduleDetails[$index - 1]['tanggal'],
+                'waktu' => $scheduleDetails[$index - 1]['waktu'],
+                'ruang' => $scheduleDetails[$index - 1]['ruang'],
+                'dosen_penguji_1' => $dosenPenguji[0],
+                'dosen_penguji_2' => $dosenPenguji[1],
+                'dosen_penguji_3' => $dosenPenguji[2],
+                'status' => in_array($index, [1, 2, 3, 4]) ? 'selesai' : (in_array($index, [5, 6]) ? 'dijadwalkan' : 'diproses'),
+            ];
+        }
 
         foreach ($jadwal as $data) {
             DB::transaction(function () use ($data) {
                 // Create JadwalSempro
                 $jadwalSempro = JadwalSempro::create($data);
 
+                // Define approval status based on jadwal_sempro status
+                $approvalStatuses = [];
+                if ($data['status'] === 'diproses') {
+                    // All pending for 'diproses'
+                    $approvalStatuses = ['pending', 'pending', 'pending'];
+                } else {
+                    $approvalStatuses = ['setuju', 'setuju', 'setuju'];
+                }
+
                 // Create JadwalSemproApproval for each dosen penguji
                 $approvals = [
                     [
                         'jadwal_sempro_id' => $jadwalSempro->id,
                         'dosen_id' => $data['dosen_penguji_1'],
-                        'status' => 'pending',
-                        'approved_at' => null,
+                        'status' => $approvalStatuses[0],
+                        'approved_at' => $approvalStatuses[0] === 'pending' ? null : now(),
                     ],
                     [
                         'jadwal_sempro_id' => $jadwalSempro->id,
                         'dosen_id' => $data['dosen_penguji_2'],
-                        'status' => 'pending',
-                        'approved_at' => null,
+                        'status' => $approvalStatuses[1],
+                        'approved_at' => $approvalStatuses[1] === 'pending' ? null : now(),
                     ],
                     [
                         'jadwal_sempro_id' => $jadwalSempro->id,
                         'dosen_id' => $data['dosen_penguji_3'],
-                        'status' => 'pending',
-                        'approved_at' => null,
+                        'status' => $approvalStatuses[2],
+                        'approved_at' => $approvalStatuses[2] === 'pending' ? null : now(),
                     ],
                 ];
 

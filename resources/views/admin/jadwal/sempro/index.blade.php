@@ -25,11 +25,18 @@
             class="tab-content {{ request()->query('tab', 'mahasiswa') == 'mahasiswa' ? 'block' : 'hidden' }}">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl font-semibold text-gray-800">Jadwal Sempro - Mahasiswa</h2>
-                <a href="{{ route('admin.jadwal.sempro.create') }}"
-                    class="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out"
-                    data-tooltip="Tambah jadwal sempro baru">
-                    <i class="fas fa-plus mr-2"></i> Tambah Jadwal
-                </a>
+                <div class="flex space-x-2">
+                    <a href="{{ route('admin.jadwal.sempro.create') }}"
+                        class="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out"
+                        data-tooltip="Tambah jadwal sempro baru">
+                        <i class="fas fa-plus mr-2"></i> Tambah Jadwal
+                    </a>
+                    <a href="{{ route('admin.jadwal.sempro.export.form') }}"
+                        class="inline-block px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300 ease-in-out"
+                        data-tooltip="Export jadwal sempro ke Excel">
+                        <i class="fas fa-download mr-2"></i> Export
+                    </a>
+                </div>
             </div>
 
             @if (session('success'))
@@ -83,7 +90,7 @@
                                     </td>
                                     <td class="px-6 py-4 text-gray-700">
                                         <span
-                                            class="inline-block px-2 py-1 text-sm font-semibold rounded-full {{ $item->status == 'dijadwalkan' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800' }}">
+                                            class="inline-block px-2 py-1 text-sm font-semibold rounded-full {{ $item->status == 'diproses' ? 'bg-blue-100 text-blue-800' : ($item->status == 'dijadwalkan' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800') }}">
                                             {{ ucfirst($item->status) }}
                                         </span>
                                     </td>
@@ -111,6 +118,9 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <div class="mt-4">
+                        {{ $jadwal->appends(['search' => $search, 'tab' => 'mahasiswa'])->links() }}
+                    </div>
                 </div>
             @endif
         </div>
@@ -119,11 +129,6 @@
         <div id="dosen" class="tab-content {{ request()->query('tab') == 'dosen' ? 'block' : 'hidden' }}">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-2xl font-semibold text-gray-800">Jadwal Sempro - Approval Dosen</h2>
-                <a href="{{ route('admin.jadwal.sempro.approval.create') }}"
-                    class="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out"
-                    data-tooltip="Tambah approval dosen">
-                    <i class="fas fa-plus mr-2"></i> Tambah Approval
-                </a>
             </div>
 
             @if ($jadwal->isEmpty())
@@ -136,6 +141,7 @@
                                 <th class="px-6 py-3 text-left text-sm font-semibold uppercase">No</th>
                                 <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Judul Pengajuan</th>
                                 <th class="px-6 py-3 text-right text-sm font-semibold uppercase">Dosen Penguji</th>
+                                <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -182,6 +188,30 @@
                                                 <span class="tooltip">Ganti</span>
                                             </a>
                                         </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-700">
+                                        @if (
+                                            $item->approvals->whereIn('dosen_id', [$item->dosen_penguji_1, $item->dosen_penguji_2, $item->dosen_penguji_3])->count() === 3 &&
+                                                $item->approvals->whereIn('dosen_id', [$item->dosen_penguji_1, $item->dosen_penguji_2, $item->dosen_penguji_3])->every(fn($approval) => $approval->status === 'setuju') &&
+                                                $item->status === 'diproses')
+                                            <form action="{{ route('admin.jadwal.sempro.change-status', $item->id) }}"
+                                                method="POST" class="inline-block">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit"
+                                                    class="relative px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300 ease-in-out"
+                                                    data-tooltip="Jadwalkan"
+                                                    onclick="return confirm('Apakah Anda yakin ingin mengubah status menjadi Dijadwalkan?')">
+                                                    <i class="fas fa-check"></i>
+                                                    <span class="tooltip">Jadwalkan</span>
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span
+                                                class="inline-block px-2 py-1 text-sm font-semibold rounded-full {{ $item->status == 'diproses' ? 'bg-blue-100 text-blue-800' : ($item->status == 'dijadwalkan' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800') }}">
+                                                {{ ucfirst($item->status) }}
+                                            </span>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
@@ -256,11 +286,8 @@
     @push('scripts')
         <script>
             function showTab(tab) {
-                // Hide all tab contents
                 document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('block'));
                 document.getElementById(tab).classList.add('block');
-
-                // Update navbar active state
                 document.querySelectorAll('ul li a').forEach(link => {
                     link.classList.remove('active-tab');
                     link.classList.add('text-gray-600', 'hover:text-blue-600');
@@ -268,26 +295,20 @@
                 const activeLink = document.getElementById(`tab-${tab}`);
                 activeLink.classList.add('active-tab');
                 activeLink.classList.remove('text-gray-600', 'hover:text-blue-600');
-
-                // Update all links in tab content to reflect current tab
                 document.querySelectorAll('.tab-content a').forEach(link => {
                     link.href = link.href.split('?')[0] + '?tab=' + tab;
                 });
-
-                // Update URL without reloading
                 const url = new URL(window.location);
                 url.searchParams.set('tab', tab);
                 window.history.pushState({}, '', url);
             }
 
-            // Initialize tab based on URL parameter
             document.addEventListener('DOMContentLoaded', () => {
                 const urlParams = new URLSearchParams(window.location.search);
                 const tab = urlParams.get('tab') || 'mahasiswa';
                 showTab(tab);
             });
 
-            // Handle tooltip creation
             document.querySelectorAll('[data-tooltip]').forEach(element => {
                 const tooltip = document.createElement('span');
                 tooltip.className = 'tooltip';

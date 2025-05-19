@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\JadwalSemproExport;
 use App\Http\Controllers\Controller;
 use App\Models\JadwalMataKuliah;
 use App\Models\JadwalSempro;
@@ -11,6 +12,7 @@ use App\Models\PengajuanSempro;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class JadwalController extends Controller
 {
@@ -126,13 +128,82 @@ class JadwalController extends Controller
                         });
                 });
             })
-            ->paginate(10); // Add pagination
+            ->paginate(10);
         return view('admin.jadwal.sempro.index', compact('jadwal', 'search'));
     }
+
+    public function semproCreate()
+    {
+        $pengajuanSemproList = PengajuanSempro::whereNotIn('id', JadwalSempro::pluck('pengajuan_sempro_id'))
+            ->with(['bidangKeilmuan', 'mahasiswa.user'])
+            ->get();
+        $dosenList = Dosen::has('penguji')->with(['user', 'bidangKeilmuan'])->get();
+        return view('admin.jadwal.sempro.create', compact('pengajuanSemproList', 'dosenList'));
+    }
+
+    public function semproStore(Request $request)
+    {
+        $request->validate([
+            'pengajuan_sempro_id' => [
+                'required',
+                'exists:pengajuan_sempro,id',
+                Rule::unique('jadwal_sempro', 'pengajuan_sempro_id'),
+            ],
+            'tanggal' => 'required|date',
+            'waktu' => 'required|in:12:00,13:00,14:00',
+            'ruang' => 'required|string|max:50',
+            'dosen_penguji_1' => 'required|exists:dosen,id|different:dosen_penguji_2|different:dosen_penguji_3',
+            'dosen_penguji_2' => 'required|exists:dosen,id|different:dosen_penguji_1|different:dosen_penguji_3',
+            'dosen_penguji_3' => 'required|exists:dosen,id|different:dosen_penguji_1|different:dosen_penguji_2',
+            'status' => 'required|in:diproses,dijadwalkan,selesai',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $jadwal = JadwalSempro::create($request->all());
+
+            // Create approvals for each dosen_penguji
+            $approvals = [
+                [
+                    'jadwal_sempro_id' => $jadwal->id,
+                    'dosen_id' => $request->dosen_penguji_1,
+                    'status' => 'pending',
+                    'approved_at' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+                [
+                    'jadwal_sempro_id' => $jadwal->id,
+                    'dosen_id' => $request->dosen_penguji_2,
+                    'status' => 'pending',
+                    'approved_at' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+                [
+                    'jadwal_sempro_id' => $jadwal->id,
+                    'dosen_id' => $request->dosen_penguji_3,
+                    'status' => 'pending',
+                    'approved_at' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+            ];
+
+            JadwalSemproApproval::insert($approvals);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => 'Gagal menambahkan jadwal sempro dan approval: ' . $e->getMessage()]);
+        }
+
+        return redirect()->route('admin.jadwal.sempro.index')->with('success', 'Jadwal sempro dan approval dosen berhasil ditambahkan.');
+    }
+
     public function semproEdit($id)
     {
         $jadwal = JadwalSempro::findOrFail($id);
-        // Ambil pengajuan sempro yang belum dijadwalkan, tapi sertakan pengajuan sempro saat ini
         $pengajuanSemproList = PengajuanSempro::whereNotIn('id', JadwalSempro::where('id', '!=', $id)->pluck('pengajuan_sempro_id'))
             ->with('bidangKeilmuan')
             ->get();
@@ -156,13 +227,12 @@ class JadwalController extends Controller
             'dosen_penguji_1' => 'required|exists:dosen,id|different:dosen_penguji_2|different:dosen_penguji_3',
             'dosen_penguji_2' => 'required|exists:dosen,id|different:dosen_penguji_1|different:dosen_penguji_3',
             'dosen_penguji_3' => 'required|exists:dosen,id|different:dosen_penguji_1|different:dosen_penguji_2',
-            'status' => 'required|in:dijadwalkan,selesai',
+            'status' => 'required|in:diproses,dijadwalkan,selesai',
         ]);
 
         $pengajuan = PengajuanSempro::findOrFail($request->pengajuan_sempro_id);
         $bidangKeilmuanId = $pengajuan->bidang_keilmuan_id;
 
-        // Validasi bahwa semua dosen penguji memiliki bidang keilmuan yang sama
         foreach (['dosen_penguji_1', 'dosen_penguji_2', 'dosen_penguji_3'] as $field) {
             $dosen = Dosen::findOrFail($request->$field);
             if ($dosen->bidang_keilmuan_id !== $bidangKeilmuanId) {
@@ -170,90 +240,127 @@ class JadwalController extends Controller
             }
         }
 
-        $jadwal->update($request->all());
-
-        return redirect()->route('admin.jadwal.sempro.index')
-            ->with('success', 'Jadwal sempro berhasil diperbarui.');
-    }
-
-    public function semproDestroy($id)
-    {
-        $jadwal = JadwalSempro::findOrFail($id);
-        $jadwal->delete();
-
-        return redirect()->route('admin.jadwal.sempro.index')
-            ->with('success', 'Jadwal sempro berhasil dihapus.');
-    }
-
-    public function semproCreate()
-    {
-        // Ambil pengajuan sempro yang belum dijadwalkan
-        $pengajuanSemproList = PengajuanSempro::whereNotIn('id', JadwalSempro::pluck('pengajuan_sempro_id'))
-            ->with(['bidangKeilmuan', 'mahasiswa.user'])
-            ->get();
-        // Ambil dosen yang terdaftar sebagai penguji
-        $dosenList = Dosen::has('penguji')->with(['user', 'bidangKeilmuan'])->get();
-        return view('admin.jadwal.sempro.create', compact('pengajuanSemproList', 'dosenList'));
-    }
-
-    public function semproStore(Request $request)
-    {
-        $request->validate([
-            'pengajuan_sempro_id' => [
-                'required',
-                'exists:pengajuan_sempro,id',
-                Rule::unique('jadwal_sempro', 'pengajuan_sempro_id'),
-            ],
-            'tanggal' => 'required|date',
-            'waktu' => 'required|in:12:00,13:00,14:00',
-            'ruang' => 'required|string|max:50',
-            'dosen_penguji_1' => 'required|exists:dosen,id|different:dosen_penguji_2|different:dosen_penguji_3',
-            'dosen_penguji_2' => 'required|exists:dosen,id|different:dosen_penguji_1|different:dosen_penguji_3',
-            'dosen_penguji_3' => 'required|exists:dosen,id|different:dosen_penguji_1|different:dosen_penguji_2',
-            'status' => 'required|in:dijadwalkan,selesai',
-        ]);
-
-        // Use a transaction to ensure atomicity
         DB::beginTransaction();
         try {
-            // Create JadwalSempro
-            $jadwal = JadwalSempro::create($request->all());
+            // Update jadwal_sempro
+            $jadwal->update($request->all());
 
-            // Create JadwalSemproApproval for each dosen penguji
-            $approvals = [
-                [
-                    'jadwal_sempro_id' => $jadwal->id,
-                    'dosen_id' => $request->dosen_penguji_1,
-                    'status' => 'pending',
-                    'approved_at' => null,
-                ],
-                [
-                    'jadwal_sempro_id' => $jadwal->id,
-                    'dosen_id' => $request->dosen_penguji_2,
-                    'status' => 'pending',
-                    'approved_at' => null,
-                ],
-                [
-                    'jadwal_sempro_id' => $jadwal->id,
-                    'dosen_id' => $request->dosen_penguji_3,
-                    'status' => 'pending',
-                    'approved_at' => null,
-                ],
+            // Get current dosen_penguji IDs
+            $newDosenIds = [
+                $request->dosen_penguji_1,
+                $request->dosen_penguji_2,
+                $request->dosen_penguji_3,
             ];
 
-            foreach ($approvals as $approval) {
-                JadwalSemproApproval::create($approval);
+            // Get existing approval dosen_ids
+            $existingApprovalDosenIds = JadwalSemproApproval::where('jadwal_sempro_id', $jadwal->id)
+                ->pluck('dosen_id')
+                ->toArray();
+
+            // Determine dosen_ids to delete (no longer in newDosenIds)
+            $dosenIdsToDelete = array_diff($existingApprovalDosenIds, $newDosenIds);
+
+            // Determine dosen_ids to add (in newDosenIds but not in existing approvals)
+            $dosenIdsToAdd = array_diff($newDosenIds, $existingApprovalDosenIds);
+
+            // Delete approvals for removed dosen
+            if (!empty($dosenIdsToDelete)) {
+                JadwalSemproApproval::where('jadwal_sempro_id', $jadwal->id)
+                    ->whereIn('dosen_id', $dosenIdsToDelete)
+                    ->delete();
+            }
+
+            // Create new approvals for added dosen
+            $newApprovals = [];
+            foreach ($dosenIdsToAdd as $dosenId) {
+                $newApprovals[] = [
+                    'jadwal_sempro_id' => $jadwal->id,
+                    'dosen_id' => $dosenId,
+                    'status' => 'pending',
+                    'approved_at' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+            if (!empty($newApprovals)) {
+                JadwalSemproApproval::insert($newApprovals);
             }
 
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->withErrors(['error' => 'Gagal menambahkan jadwal sempro dan approval: ' . $e->getMessage()]);
+            return redirect()->back()->withErrors(['error' => 'Gagal memperbarui jadwal sempro dan approval: ' . $e->getMessage()]);
         }
 
-        return redirect()->route('admin.jadwal.sempro.index')->with('success', 'Jadwal sempro dan approval dosen berhasil ditambahkan.');
+        return redirect()->route('admin.jadwal.sempro.index')
+            ->with('success', 'Jadwal sempro dan approval dosen berhasil diperbarui.');
     }
 
+    public function semproDestroy($id)
+    {
+        $jadwal = JadwalSempro::findOrFail($id);
+        $jadwal->delete(); // Approvals deleted via cascade
+
+        return redirect()->route('admin.jadwal.sempro.index')
+            ->with('success', 'Jadwal sempro berhasil dihapus.');
+    }
+
+    public function semproChangeStatus(Request $request, $id)
+    {
+        $jadwal = JadwalSempro::with('approvals')->findOrFail($id);
+
+        // Validate current status and approvals
+        if ($jadwal->status !== 'diproses') {
+            return redirect()->route('admin.jadwal.sempro.index', ['tab' => 'dosen'])
+                ->withErrors(['error' => 'Jadwal harus berstatus Diproses untuk diubah ke Dijadwalkan.']);
+        }
+
+        $approvals = $jadwal->approvals->whereIn('dosen_id', [
+            $jadwal->dosen_penguji_1,
+            $jadwal->dosen_penguji_2,
+            $jadwal->dosen_penguji_3
+        ]);
+
+        if ($approvals->count() !== 3 || !$approvals->every(fn($approval) => $approval->status === 'setuju')) {
+            return redirect()->route('admin.jadwal.sempro.index', ['tab' => 'dosen'])
+                ->withErrors(['error' => 'Semua dosen penguji harus menyetujui sebelum status dapat diubah ke Dijadwalkan.']);
+        }
+
+        DB::beginTransaction();
+        try {
+            $jadwal->update(['status' => 'dijadwalkan']);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('admin.jadwal.sempro.index', ['tab' => 'dosen'])
+                ->withErrors(['error' => 'Gagal mengubah status jadwal: ' . $e->getMessage()]);
+        }
+
+        return redirect()->route('admin.jadwal.sempro.index', ['tab' => 'dosen'])
+            ->with('success', 'Status jadwal berhasil diubah menjadi Dijadwalkan.');
+    }
+
+    // Export Jadwal Sempro
+    public function semproExportForm()
+    {
+        return view('admin.jadwal.sempro.export');
+    }
+
+    public function semproExport(Request $request)
+    {
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'status' => 'nullable|in:diproses,dijadwalkan,selesai',
+        ]);
+
+        return Excel::download(
+            new JadwalSemproExport($request->start_date, $request->end_date, $request->status),
+            'jadwal_sempro_' . $request->start_date . '_to_' . $request->end_date . ($request->status ? '_' . $request->status : '') . '.xlsx'
+        );
+    }
+
+    // Approval Dosen
     public function approvalCreate()
     {
         $jadwalSempro = JadwalSempro::with('pengajuanSempro')->get();

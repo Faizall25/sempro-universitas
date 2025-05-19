@@ -2,17 +2,16 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Dosen;
 use App\Models\BidangKeilmuan;
+use App\Models\Dosen;
 use App\Models\DosenPenguji;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Log;
 
 class DosenPengujiSeeder extends Seeder
 {
     public function run()
     {
-        // Daftar bidang keilmuan
         $bidangKeilmuanList = [
             'Web & Mobile Programming',
             'Multimedia & Teknologi Informasi',
@@ -23,22 +22,21 @@ class DosenPengujiSeeder extends Seeder
         ];
 
         foreach ($bidangKeilmuanList as $bidangName) {
-            // Ambil bidang keilmuan
             $bidang = BidangKeilmuan::where('name', $bidangName)->first();
 
             if (!$bidang) {
-                continue; // Lewati jika bidang keilmuan tidak ditemukan
+                continue;
             }
 
-            // Ambil 3 dosen dengan bidang keilmuan yang sesuai (termasuk yang sudah pembimbing)
+            // Take 4 dosen per bidang (increased from 3)
             $dosenList = Dosen::where('bidang_keilmuan_id', $bidang->id)
                 ->inRandomOrder()
-                ->take(3)
+                ->take(4)
                 ->get();
 
-            if ($dosenList->count() < 3) {
-                Log::warning("Hanya {$dosenList->count()} dosen ditemukan untuk bidang keilmuan {$bidangName}. Dibutuhkan minimal 3 dosen.");
-                continue; // Lewati jika tidak cukup dosen
+            if ($dosenList->count() < 4) {
+                Log::warning("Hanya {$dosenList->count()} dosen ditemukan untuk bidang keilmuan {$bidangName}. Dibutuhkan minimal 4 dosen.");
+                continue;
             }
 
             foreach ($dosenList as $dosen) {

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('dosen_penguji_1')->constrained('dosen')->onDelete('restrict');
             $table->foreignId('dosen_penguji_2')->constrained('dosen')->onDelete('restrict');
             $table->foreignId('dosen_penguji_3')->constrained('dosen')->onDelete('restrict');
-            $table->enum('status', ['dijadwalkan', 'selesai'])->default('dijadwalkan');
+            $table->enum('status', ['diproses','dijadwalkan', 'selesai'])->default('dijadwalkan');
             $table->timestamps();
         });
     }

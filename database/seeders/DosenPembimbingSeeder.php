@@ -2,16 +2,15 @@
 
 namespace Database\Seeders;
 
+use App\Models\BidangKeilmuan;
+use App\Models\Dosen;
 use App\Models\DosenPembimbing;
 use Illuminate\Database\Seeder;
-use App\Models\Dosen;
-use App\Models\BidangKeilmuan;
 
 class DosenPembimbingSeeder extends Seeder
 {
     public function run()
     {
-        // Daftar bidang keilmuan
         $bidangKeilmuanList = [
             'Web & Mobile Programming',
             'Multimedia & Teknologi Informasi',
@@ -22,17 +21,16 @@ class DosenPembimbingSeeder extends Seeder
         ];
 
         foreach ($bidangKeilmuanList as $bidangName) {
-            // Ambil bidang keilmuan
             $bidang = BidangKeilmuan::where('name', $bidangName)->first();
 
             if (!$bidang) {
-                continue; // Lewati jika bidang keilmuan tidak ditemukan
+                continue;
             }
 
-            // Ambil 3 dosen dengan bidang keilmuan yang sesuai
+            // Take 4 dosen per bidang (increased from 3)
             $dosenList = Dosen::where('bidang_keilmuan_id', $bidang->id)
                 ->inRandomOrder()
-                ->take(3)
+                ->take(4)
                 ->get();
 
             foreach ($dosenList as $dosen) {

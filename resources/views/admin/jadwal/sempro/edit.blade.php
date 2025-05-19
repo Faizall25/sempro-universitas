@@ -45,7 +45,7 @@
                 <div class="mb-4">
                     <label for="tanggal" class="block text-gray-700 font-medium mb-2">Tanggal</label>
                     <input type="date" id="tanggal" name="tanggal"
-                        value="{{ old(' indictment', $jadwal->tanggal->format('Y-m-d')) }}"
+                        value="{{ old('tanggal', $jadwal->tanggal->format('Y-m-d')) }}"
                         class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
                     @error('tanggal')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -168,9 +168,12 @@
                     <label for="status" class="block text-gray-700 font-medium mb-2">Status</label>
                     <select id="status" name="status"
                         class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
-                        <option value="dijadwalkan" {{ $jadwal->status == 'dijadwalkan' ? 'selected' : '' }}>Dijadwalkan
-                        </option>
-                        <option value="selesai" {{ $jadwal->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                        <option value="diproses" {{ old('status', $jadwal->status) == 'diproses' ? 'selected' : '' }}>
+                            Diproses</option>
+                        <option value="dijadwalkan"
+                            {{ old('status', $jadwal->status) == 'dijadwalkan' ? 'selected' : '' }}>Dijadwalkan</option>
+                        <option value="selesai" {{ old('status', $jadwal->status) == 'selesai' ? 'selected' : '' }}>
+                            Selesai</option>
                     </select>
                     @error('status')
                         <span class="text-red-500 text-sm">{{ $message }}</span>

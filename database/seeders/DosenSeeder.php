@@ -17,6 +17,7 @@ class DosenSeeder extends Seeder
             'A\'LA SYAUQI,M.Kom' => 'Web & Mobile Programming',
             'RORO INDA MELANI, M.T.,M.Sc' => 'Web & Mobile Programming',
             'NURIZAL DWI PRIANDANI,S.Kom., M.Kom' => 'Web & Mobile Programming',
+            'NOVRINDAH ALVI HASANAH,M.Kom' => 'Web & Mobile Programming',
 
             // Multimedia & Teknologi Informasi
             'HANI NURHAYATI,M.T' => 'Multimedia & Teknologi Informasi',
@@ -54,6 +55,7 @@ class DosenSeeder extends Seeder
             'JOHAN ERICKA WAHYU PRAKASA,M.Kom' => 'System & Network',
             'AJIB HANANI, S.Kom, M.T' => 'System & Network',
             'SHOFFIN NAHWA UTAMA, S.Kom, M.T' => 'System & Network',
+            'MILADINA RIZKA AZIZA,M.S.' => 'System & Network',
         ];
 
         // Daftar dosen yang tidak ada di Knowledge Groups (diassign ke bidang keilmuan default)

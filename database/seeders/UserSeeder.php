@@ -2,16 +2,19 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Faker\Factory as Faker;
 
 class UserSeeder extends Seeder
 {
     public function run()
     {
-        // Daftar dosen unik dari data jadwal
+        $faker = Faker::create('id_ID');
+
+        // Daftar dosen unik dari data jadwal (unchanged)
         $dosenNames = [
             'SHOFFIN NAHWA UTAMA, S.Kom, M.T',
             'HANI NURHAYATI,M.T',
@@ -59,10 +62,17 @@ class UserSeeder extends Seeder
             'SHA SHA NAQIA,S.Pd., M.Pd',
             'Dr. H. MOCHAMAD IMAMUDIN,Lc., M.A',
         ];
+        $mhsname = [
+            'Kautsar Quraisy Al Hamidy',
+            'Akhmad Faizal Ferdianto',
+            'Izza Syahri Muharram',
+            'Arum Puspita',
+            'Faiza Arifatul Husna',
+        ];
 
         // Membuat akun untuk setiap dosen
-        foreach ($dosenNames as $name) {
-            $email = Str::slug(strtolower(str_replace(['.', ','], '', $name))) . '@uinmalang.com';
+        foreach ($dosenNames as $index => $name) {
+            $email = Str::slug(strtolower(str_replace(['.', ','], '', $name))) . '@universitas.com';
             User::create([
                 'name' => $name,
                 'email' => $email,
@@ -74,23 +84,30 @@ class UserSeeder extends Seeder
         // Membuat akun admin
         User::create([
             'name' => 'Admin UIN Malang',
-            'email' => 'admin@uinmalang.com',
+            'email' => 'admin@universitas.com',
             'password' => Hash::make('password'),
             'role' => 'admin',
         ]);
 
-        // Membuat akun mahasiswa
-        User::create([
-            'name' => 'Mahasiswa Satu',
-            'email' => 'mahasiswa@uinmalang.com',
-            'password' => Hash::make('password'),
-            'role' => 'mahasiswa',
-        ]);
-        User::create([
-            'name' => 'Mahasiswa Dua',
-            'email' => 'mahasiswa2@uinmalang.com',
-            'password' => Hash::make('password'),
-            'role' => 'mahasiswa',
-        ]);
+        // Membuat akun mahasiswa (named students)
+        foreach ($mhsname as $index => $mname) {
+            $firstname = strtolower(explode(' ', $mname)[0]);
+            User::create([
+                'name' => $mname,
+                'email' => $firstname . '@student.com',
+                'password' => Hash::make('password'),
+                'role' => 'mahasiswa',
+            ]);
+        }
+
+        // Membuat akun mahasiswa tambahan (generic)
+        for ($i = 1; $i <= 7; $i++) {
+            User::create([
+                'name' => $faker->name,
+                'email' => 'mahasiswa' . $i . '@student.com',
+                'password' => Hash::make('password'),
+                'role' => 'mahasiswa',
+            ]);
+        }
     }
 }
