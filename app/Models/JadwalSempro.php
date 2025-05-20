@@ -32,17 +32,17 @@ class JadwalSempro extends Model
 
     public function dosenPenguji1()
     {
-        return $this->belongsTo(Dosen::class, 'dosen_penguji_1');
+        return $this->belongsTo(Dosen::class, 'dosen_penguji_1')->withTrashed();
     }
 
     public function dosenPenguji2()
     {
-        return $this->belongsTo(Dosen::class, 'dosen_penguji_2');
+        return $this->belongsTo(Dosen::class, 'dosen_penguji_2')->withTrashed();
     }
 
     public function dosenPenguji3()
     {
-        return $this->belongsTo(Dosen::class, 'dosen_penguji_3');
+        return $this->belongsTo(Dosen::class, 'dosen_penguji_3')->withTrashed();
     }
 
     public function hasilSempro()
