@@ -24,7 +24,15 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
-    // Rute untuk Semua Dosen
+    // Route untuk CRUD User
+    Route::get('users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
+    Route::get('users/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('admin.users.create');
+    Route::post('users', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.users.store');
+    Route::get('users/{id}/edit', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('admin.users.edit');
+    Route::put('users/{id}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('admin.users.update');
+    Route::delete('users/{id}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('admin.users.destroy');
+
+    // Rute untuk CRUD Semua Dosen
     Route::get('/dosen/all', [DosenController::class, 'allIndex'])->name('admin.dosen.all.index');
     Route::get('/dosen/all/create', [DosenController::class, 'allCreate'])->name('admin.dosen.all.create');
     Route::post('/dosen/all', [DosenController::class, 'allStore'])->name('admin.dosen.all.store');
@@ -32,7 +40,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/dosen/all/{id}', [DosenController::class, 'allUpdate'])->name('admin.dosen.all.update');
     Route::delete('/dosen/all/{id}', [DosenController::class, 'allDestroy'])->name('admin.dosen.all.destroy');
 
-    // Rute untuk Dosen Pembimbing
+    // Rute untuk CRUD Dosen Pembimbing
     Route::get('/dosen/pembimbing', [DosenController::class, 'pembimbingIndex'])->name('admin.dosen.pembimbing.index');
     Route::get('/dosen/pembimbing/create', [DosenController::class, 'pembimbingCreate'])->name('admin.dosen.pembimbing.create');
     Route::post('/dosen/pembimbing', [DosenController::class, 'pembimbingStore'])->name('admin.dosen.pembimbing.store');
@@ -40,7 +48,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/dosen/pembimbing/{id}', [DosenController::class, 'pembimbingUpdate'])->name('admin.dosen.pembimbing.update');
     Route::delete('/dosen/pembimbing/{id}', [DosenController::class, 'pembimbingDestroy'])->name('admin.dosen.pembimbing.destroy');
 
-    // Rute untuk Dosen Penguji
+    // Rute untuk CRUD Dosen Penguji
     Route::get('/dosen/penguji', [DosenController::class, 'pengujiIndex'])->name('admin.dosen.penguji.index');
     Route::get('/dosen/penguji/create', [DosenController::class, 'pengujiCreate'])->name('admin.dosen.penguji.create');
     Route::post('/dosen/penguji', [DosenController::class, 'pengujiStore'])->name('admin.dosen.penguji.store');
@@ -49,7 +57,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::patch('/dosen/penguji/{id}/toggle', [DosenController::class, 'pengujiToggleStatus'])->name('admin.dosen.penguji.toggle');
     Route::delete('/dosen/penguji/{id}', [DosenController::class, 'pengujiDestroy'])->name('admin.dosen.penguji.destroy');
 
-    // Rute untuk Jadwal Mata Kuliah
+    // Rute untuk CRUD Jadwal Mata Kuliah
     Route::get('/jadwal/mata-kuliah', [JadwalController::class, 'mataKuliahIndex'])->name('admin.jadwal.mata-kuliah.index');
     Route::get('/jadwal/mata-kuliah/create', [JadwalController::class, 'mataKuliahCreate'])->name('admin.jadwal.mata-kuliah.create');
     Route::post('/jadwal/mata-kuliah', [JadwalController::class, 'mataKuliahStore'])->name('admin.jadwal.mata-kuliah.store');
@@ -57,7 +65,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/jadwal/mata-kuliah/{id}', [JadwalController::class, 'mataKuliahUpdate'])->name('admin.jadwal.mata-kuliah.update');
     Route::delete('/jadwal/mata-kuliah/{id}', [JadwalController::class, 'mataKuliahDestroy'])->name('admin.jadwal.mata-kuliah.destroy');
 
-    // Rute untuk Jadwal Sempro
+    // Rute untuk CRUD Jadwal Sempro
     Route::get('jadwal/sempro/export/form', [JadwalController::class, 'semproExportForm'])->name('admin.jadwal.sempro.export.form');
     Route::post('jadwal/sempro/export', [JadwalController::class, 'semproExport'])->name('admin.jadwal.sempro.export');
     Route::get('/jadwal/sempro', [JadwalController::class, 'semproIndex'])->name('admin.jadwal.sempro.index');
@@ -69,7 +77,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::patch('/jadwal/sempro/{id}/change-status', [JadwalController::class, 'semproChangeStatus'])->name('admin.jadwal.sempro.change-status');
     Route::get('jadwal/dosen/{dosenId}/jadwal', [JadwalController::class, 'getDosenJadwal'])->name('admin.jadwal.dosen.jadwal');
 
-    // Rute approval penguji
+    // Rute untuk CRUD approval penguji
     Route::get('/jadwal/sempro/approval/create', [JadwalController::class, 'approvalCreate'])->name('admin.jadwal.sempro.approval.create');
     Route::post('/jadwal/sempro/approval', [JadwalController::class, 'approvalStore'])->name('admin.jadwal.sempro.approval.store');
     Route::get('/jadwal/sempro/approval/{id}/edit', [JadwalController::class, 'approvalEdit'])->name('admin.jadwal.sempro.approval.edit');
@@ -78,7 +86,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/jadwal/sempro/{jadwal}/penguji/{penguji}/edit', [JadwalController::class, 'editPenguji'])->name('admin.jadwal.sempro.approval.edit.penguji');
     Route::put('/jadwal/sempro/{jadwal}/penguji/{penguji}', [JadwalController::class, 'updatePenguji'])->name('admin.jadwal.sempro.approval.update.penguji');
 
-    // Rute untuk Hasil Sempro
+    // Rute untuk CRUD Hasil Sempro
     Route::get('/hasil/sempro', [HasilController::class, 'index'])->name('admin.hasil.sempro.index');
     Route::get('/hasil/sempro/create', [HasilController::class, 'create'])->name('admin.hasil.sempro.create');
     Route::post('/hasil/sempro', [HasilController::class, 'store'])->name('admin.hasil.sempro.store');
@@ -86,7 +94,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/hasil/sempro/{id}', [HasilController::class, 'update'])->name('admin.hasil.sempro.update');
     Route::delete('/hasil/sempro/{id}', [HasilController::class, 'destroy'])->name('admin.hasil.sempro.destroy');
 
-    // Rute untuk Pengajuan Sempro
+    // Rute untuk CRUD Pengajuan Sempro
     Route::get('pengajuan-sempro', [SemproController::class, 'index'])->name('admin.pengajuan-sempro.index');
     Route::get('pengajuan-sempro/create', [SemproController::class, 'create'])->name('admin.pengajuan-sempro.create');
     Route::post('pengajuan-sempro', [SemproController::class, 'store'])->name('admin.pengajuan-sempro.store');

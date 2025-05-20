@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('kapasitas_maksimum')->default(20);
             $table->boolean('status_aktif')->default(true);
             $table->timestamps();
-
+            $table->softDeletes();
             $table->foreign('dosen_id')->references('id')->on('dosen')->onDelete('cascade');
         });
     }

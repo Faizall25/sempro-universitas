@@ -11,16 +11,53 @@ use Illuminate\Http\Request;
 
 class SemproController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pengajuanSempro = PengajuanSempro::with(['mahasiswa.user', 'dosenPembimbing.user', 'bidangKeilmuan'])->get();
-        return view('admin.pengajuan-sempro.index', compact('pengajuanSempro'));
+        $search = $request->query('search');
+        $pengajuanSempro = PengajuanSempro::with(['mahasiswa.user', 'dosenPembimbing.user', 'bidangKeilmuan'])
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('mahasiswa', function ($q) use ($search) {
+                        $q->whereHas('user', function ($q) use ($search) {
+                            $q->withTrashed()->where('name', 'like', "%{$search}%");
+                        });
+                    })
+                        ->orWhere('judul', 'like', "%{$search}%")
+                        ->orWhere('jurusan', 'like', "%{$search}%")
+                        ->orWhere('fakultas', 'like', "%{$search}%")
+                        ->orWhereHas('dosenPembimbing', function ($q) use ($search) {
+                            $q->whereHas('user', function ($q) use ($search) {
+                                $q->withTrashed()->where('name', 'like', "%{$search}%");
+                            });
+                        })
+                        ->orWhereHas('bidangKeilmuan', function ($q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%");
+                        })
+                        ->orWhere('status', 'like', "%{$search}%")
+                        ->orWhere(function ($q) use ($search) {
+                            if (stripos('Dosen Tidak Tersedia', $search) !== false) {
+                                $q->whereHas('dosenPembimbing', function ($q) {
+                                    $q->withTrashed()->whereNotNull('deleted_at');
+                                });
+                            }
+                        })
+                        ->orWhere(function ($q) use ($search) {
+                            if (stripos('Mahasiswa Tidak Tersedia', $search) !== false) {
+                                $q->whereHas('mahasiswa', function ($q) {
+                                    $q->withTrashed()->whereNotNull('deleted_at');
+                                });
+                            }
+                        });
+                });
+            })
+            ->paginate(10);
+        return view('admin.pengajuan-sempro.index', compact('pengajuanSempro', 'search'));
     }
 
     public function create()
     {
         $mahasiswa = Mahasiswa::with('user')->get();
-        $dosen = Dosen::with('user','bidangKeilmuan')->whereHas('pembimbing', function ($query) {
+        $dosen = Dosen::with('user', 'bidangKeilmuan')->whereHas('pembimbing', function ($query) {
             $query->where('status_aktif', true);
         })->get();
         $bidangKeilmuan = BidangKeilmuan::all();

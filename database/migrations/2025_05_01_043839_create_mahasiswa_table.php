@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('program_studi', 100);
             $table->string('fakultas', 100);
             $table->year('tahun_masuk');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

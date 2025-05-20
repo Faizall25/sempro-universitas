@@ -20,18 +20,29 @@ class JadwalController extends Controller
     public function mataKuliahIndex(Request $request)
     {
         $search = $request->query('search');
-        $jadwal = JadwalMataKuliah::with(['dosen.user'])
+        $jadwal = JadwalMataKuliah::with(['dosen' => function ($query) {
+            $query->withTrashed()->with(['user' => function ($q) {
+                $q->withTrashed();
+            }]);
+        }])
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('hari', 'like', "%{$search}%")
                         ->orWhere('mata_kuliah', 'like', "%{$search}%")
                         ->orWhere('ruang', 'like', "%{$search}%")
                         ->orWhereHas('dosen.user', function ($q) use ($search) {
-                            $q->where('name', 'like', "%{$search}%");
+                            $q->withTrashed()->where('name', 'like', "%{$search}%");
+                        })
+                        ->orWhere(function ($q) use ($search) {
+                            if (stripos('Dosen Tidak Tersedia', $search) !== false) {
+                                $q->whereHas('dosen', function ($q) {
+                                    $q->whereNotNull('deleted_at');
+                                });
+                            }
                         });
                 });
             })
-            ->paginate(10); // Add pagination
+            ->paginate(10);
         return view('admin.jadwal.mata-kuliah.index', compact('jadwal', 'search'));
     }
 
@@ -107,24 +118,57 @@ class JadwalController extends Controller
     public function semproIndex(Request $request)
     {
         $search = $request->query('search');
-        $jadwal = JadwalSempro::with(['pengajuanSempro.mahasiswa.user', 'dosenPenguji1.user', 'dosenPenguji2.user', 'dosenPenguji3.user', 'approvals.dosen'])
+        $jadwal = JadwalSempro::with([
+            'pengajuanSempro.mahasiswa.user',
+            'dosenPenguji1' => function ($query) {
+                $query->withTrashed()->with(['user' => function ($q) {
+                    $q->withTrashed();
+                }]);
+            },
+            'dosenPenguji2' => function ($query) {
+                $query->withTrashed()->with(['user' => function ($q) {
+                    $q->withTrashed();
+                }]);
+            },
+            'dosenPenguji3' => function ($query) {
+                $query->withTrashed()->with(['user' => function ($q) {
+                    $q->withTrashed();
+                }]);
+            },
+            'approvals.dosen'
+        ])
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->whereHas('pengajuanSempro', function ($q) use ($search) {
                         $q->where('judul', 'like', "%{$search}%")
                             ->orWhereHas('mahasiswa.user', function ($q) use ($search) {
-                                $q->where('name', 'like', "%{$search}%");
+                                $q->withTrashed()->where('name', 'like', "%{$search}%");
                             });
                     })
                         ->orWhere('ruang', 'like', "%{$search}%")
                         ->orWhereHas('dosenPenguji1.user', function ($q) use ($search) {
-                            $q->where('name', 'like', "%{$search}%");
+                            $q->withTrashed()->where('name', 'like', "%{$search}%");
                         })
                         ->orWhereHas('dosenPenguji2.user', function ($q) use ($search) {
-                            $q->where('name', 'like', "%{$search}%");
+                            $q->withTrashed()->where('name', 'like', "%{$search}%");
                         })
                         ->orWhereHas('dosenPenguji3.user', function ($q) use ($search) {
-                            $q->where('name', 'like', "%{$search}%");
+                            $q->withTrashed()->where('name', 'like', "%{$search}%");
+                        })
+                        ->orWhere(function ($q) use ($search) {
+                            if (stripos('Dosen Tidak Tersedia', $search) !== false) {
+                                $q->where(function ($q) {
+                                    $q->whereHas('dosenPenguji1', function ($q) {
+                                        $q->whereNotNull('deleted_at');
+                                    })
+                                        ->orWhereHas('dosenPenguji2', function ($q) {
+                                            $q->whereNotNull('deleted_at');
+                                        })
+                                        ->orWhereHas('dosenPenguji3', function ($q) {
+                                            $q->whereNotNull('deleted_at');
+                                        });
+                                });
+                            }
                         });
                 });
             })

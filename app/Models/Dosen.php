@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Dosen extends Model
 {
+    use SoftDeletes;
     protected $table = 'dosen';
     protected $fillable = ['user_id', 'nip', 'tempat_lahir', 'tanggal_lahir', 'asal_kota', 'bidang_keilmuan_id'];
 
@@ -15,7 +17,7 @@ class Dosen extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
     public function bidangKeilmuan()

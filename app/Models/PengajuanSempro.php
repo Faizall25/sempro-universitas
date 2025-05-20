@@ -24,7 +24,7 @@ class PengajuanSempro extends Model
 
     public function mahasiswa()
     {
-        return $this->belongsTo(Mahasiswa::class);
+        return $this->belongsTo(Mahasiswa::class)->withTrashed();
     }
 
     public function bidangKeilmuan()
@@ -34,7 +34,7 @@ class PengajuanSempro extends Model
 
     public function dosenPembimbing()
     {
-        return $this->belongsTo(Dosen::class, 'dosen_pembimbing_id');
+        return $this->belongsTo(Dosen::class, 'dosen_pembimbing_id')->withTrashed();
     }
 
     public function jadwalSempro()

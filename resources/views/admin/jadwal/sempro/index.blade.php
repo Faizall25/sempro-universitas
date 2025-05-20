@@ -82,11 +82,23 @@
                                     <td class="px-6 py-4 text-gray-700">{{ $item->pengajuanSempro->judul ?? 'N/A' }}
                                     </td>
                                     <td class="px-6 py-4 text-gray-700">
-                                        Penguji 1: {{ $item->dosenPenguji1->user->name ?? 'N/A' }}<br>
+                                        @if ($item->dosenPenguji1 && $item->dosenPenguji1->user)
+                                            {{ $item->dosenPenguji1->deleted_at ? 'Dosen Tidak Tersedia (' . $item->dosenPenguji1->user->name . ')' : $item->dosenPenguji1->user->name }}
+                                        @else
+                                            Dosen Tidak Tersedia
+                                        @endif
                                         <hr style="border-top: 3px solid #bbb">
-                                        Penguji 2: {{ $item->dosenPenguji2->user->name ?? 'N/A' }}<br>
+                                        @if ($item->dosenPenguji2 && $item->dosenPenguji2->user)
+                                            {{ $item->dosenPenguji2->deleted_at ? 'Dosen Tidak Tersedia (' . $item->dosenPenguji2->user->name . ')' : $item->dosenPenguji2->user->name }}
+                                        @else
+                                            Dosen Tidak Tersedia
+                                        @endif
                                         <hr style="border-top: 3px solid #bbb">
-                                        Penguji 3: {{ $item->dosenPenguji3->user->name ?? 'N/A' }}
+                                        @if ($item->dosenPenguji3 && $item->dosenPenguji3->user)
+                                            {{ $item->dosenPenguji3->deleted_at ? 'Dosen Tidak Tersedia (' . $item->dosenPenguji3->user->name . ')' : $item->dosenPenguji3->user->name }}
+                                        @else
+                                            Dosen Tidak Tersedia
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4 text-gray-700">
                                         <span
@@ -154,7 +166,12 @@
                                     <td class="px-6 py-4">
                                         <div class="flex items-center justify-end">
                                             <div class="text-right">
-                                                Penguji 1: {{ $item->dosenPenguji1->user->name ?? 'N/A' }}
+                                                Penguji 1:
+                                                @if ($item->dosenPenguji1 && $item->dosenPenguji1->user)
+                                                    {{ $item->dosenPenguji1->deleted_at ? 'Dosen Tidak Tersedia (' . $item->dosenPenguji1->user->name . ')' : $item->dosenPenguji1->user->name }}
+                                                @else
+                                                    Dosen Tidak Tersedia
+                                                @endif
                                                 ({{ $item->approvals->where('dosen_id', $item->dosen_penguji_1)->first()->status ?? 'null' }})
                                             </div>
                                             <a href="{{ route('admin.jadwal.sempro.approval.edit.penguji', ['jadwal' => $item->id, 'penguji' => 1]) }}"
@@ -166,7 +183,12 @@
                                         </div>
                                         <div class="flex items-center justify-end mt-2">
                                             <div class="text-right">
-                                                Penguji 2: {{ $item->dosenPenguji2->user->name ?? 'N/A' }}
+                                                Penguji 2:
+                                                @if ($item->dosenPenguji2 && $item->dosenPenguji2->user)
+                                                    {{ $item->dosenPenguji2->deleted_at ? 'Dosen Tidak Tersedia (' . $item->dosenPenguji2->user->name . ')' : $item->dosenPenguji2->user->name }}
+                                                @else
+                                                    Dosen Tidak Tersedia
+                                                @endif
                                                 ({{ $item->approvals->where('dosen_id', $item->dosen_penguji_2)->first()->status ?? 'null' }})
                                             </div>
                                             <a href="{{ route('admin.jadwal.sempro.approval.edit.penguji', ['jadwal' => $item->id, 'penguji' => 2]) }}"
@@ -178,7 +200,12 @@
                                         </div>
                                         <div class="flex items-center justify-end mt-2">
                                             <div class="text-right">
-                                                Penguji 3: {{ $item->dosenPenguji3->user->name ?? 'N/A' }}
+                                                Penguji 3:
+                                                @if ($item->dosenPenguji3 && $item->dosenPenguji3->user)
+                                                    {{ $item->dosenPenguji3->deleted_at ? 'Dosen Tidak Tersedia (' . $item->dosenPenguji3->user->name . ')' : $item->dosenPenguji3->user->name }}
+                                                @else
+                                                    Dosen Tidak Tersedia
+                                                @endif
                                                 ({{ $item->approvals->where('dosen_id', $item->dosen_penguji_3)->first()->status ?? 'null' }})
                                             </div>
                                             <a href="{{ route('admin.jadwal.sempro.approval.edit.penguji', ['jadwal' => $item->id, 'penguji' => 3]) }}"

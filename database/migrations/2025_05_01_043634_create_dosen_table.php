@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('tanggal_lahir');
             $table->string('asal_kota', 100);
             $table->foreignId('bidang_keilmuan_id')->constrained('bidang_keilmuan')->onDelete('restrict');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
