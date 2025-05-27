@@ -123,8 +123,6 @@
                                     <th style="color: #006066; padding: 12px; text-align: left; border-bottom: 1px solid #ccc;">No</th>
                                     <th style="color: #006066; padding: 12px; text-align: left; border-bottom: 1px solid #ccc;">NIM</th>
                                     <th style="color: #006066; padding: 12px; text-align: left; border-bottom: 1px solid #ccc;">Nama Mahasiswa</th>
-                                    <th style="color: #006066; padding: 12px; text-align: left; border-bottom: 1px solid #ccc;">Judul</th>
-                                    <th style="color: #006066; padding: 12px; text-align: left; border-bottom: 1px solid #ccc;">Dosen Pembimbing</th>
                                     <th style="color: #006066; padding: 12px; text-align: left; border-bottom: 1px solid #ccc;">Status</th>
                                 </tr>
                             </thead>
@@ -134,8 +132,6 @@
                                         <td style="padding: 12px;">{{ $index + 1 }}</td>
                                         <td style="padding: 12px;">{{ $item->mahasiswa->nim ?? '-' }}</td>
                                         <td style="padding: 12px;">{{ $item->mahasiswa->user->name ?? '-' }}</td>
-                                        <td style="padding: 12px;">{{ $item->judul }}</td>
-                                        <td style="padding: 12px;">{{ $item->dosenPembimbing->user->name ?? '-' }}</td>
                                         <td style="padding: 12px;">
                                             <span class="px-3 py-1 rounded-full text-xs 
                                                 {{ 

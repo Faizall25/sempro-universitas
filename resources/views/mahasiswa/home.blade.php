@@ -46,62 +46,24 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Card 1: Profil Mahasiswa -->
             <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <h3 style="color: #006066; font-weight: bold; font-size: 1.5rem; margin-bottom: 1.5rem;">
-                    Jadwal Mata Kuliah Hari {{ $hariIni }}
+                <h3 style="color: #006066; font-weight: bold; font-size: 1.5rem; margin-bottom: 1rem;">
+                    Grafik IPK Mahasiswa
                 </h3>
-                @if($jadwal->count())
-                    <div style="overflow-x:auto;">
-                        <table
-                            style="min-width: 100%; border-collapse: collapse; border: 2px solid #006066; border-radius: 8px; overflow: hidden;">
-                            <thead style="background-color: #006066; color: white;">
-                                <tr>
-                                    <th
-                                        style="padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        Hari</th>
-                                    <th
-                                        style="padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        Pukul</th>
-                                    <th
-                                        style="padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        Mata Kuliah</th>
-                                    <th
-                                        style="padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        Dosen</th>
-                                    <th
-                                        style="padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        Kelas</th>
-                                    <th
-                                        style="padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        Ruang</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($jadwal as $item)
-                                    <tr style="border-top: 1px solid #ddd; transition: background-color 0.3s ease; cursor: pointer;"
-                                        onmouseover="this.style.backgroundColor='rgba(0, 96, 102, 0.15)';"
-                                        onmouseout="this.style.backgroundColor='';">
-                                        <td style="padding: 12px 16px; font-size: 0.875rem;">{{ $item->hari }}</td>
-                                        <td style="padding: 12px 16px; font-size: 0.875rem;">
-                                            {{ \Carbon\Carbon::parse($item->pukul)->format('H:i') }}
-                                        </td>
-                                        <td style="padding: 12px 16px; font-size: 0.875rem;">{{ $item->mata_kuliah }}</td>
-                                        <td style="padding: 12px 16px; font-size: 0.875rem;">
-                                            {{ $item->dosen->user->name ?? 'Nama tidak tersedia' }}
-                                        </td>
-                                        <td style="padding: 12px 16px; font-size: 0.875rem;">{{ $item->kelas }}</td>
-                                        <td style="padding: 12px 16px; font-size: 0.875rem;">{{ $item->ruang }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
 
-                    </div>
-                @else
-                    <p class="text-gray-600">Belum ada jadwal mata kuliah untuk hari ini.</p>
-                @endif
+                <p class="text-gray-700 mb-1">
+                    <strong>Nama:</strong> {{ $mahasiswa->user->name }}
+                </p>
+                <p class="text-gray-700 mb-1">
+                    <strong>NIM:</strong> {{ $mahasiswa->nim }}
+                </p>
+                <p class="text-gray-700 mb-4">
+                    <strong>IPK:</strong> <span id="ipk-value">-</span>
+                </p>
 
+                <div style="width: 100%; height: auto;">
+                    <canvas id="ipkChart"></canvas>
+                </div>
             </div>
-
 
             <!-- Card 2: Jadwal Kuliah Hari Ini -->
             <div class="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300">
@@ -132,8 +94,9 @@
                                                     <td style="padding: 12px; color: #333;">{{ $index + 1 }}</td>
                                                     <td style="padding: 12px; color: #333;">{{ $item->judul }}</td>
                                                     <td style="padding: 12px;">
-                                                        <span class="px-3 py-1 rounded-full text-xs {{$item->status == 'diterima' ? 'bg-green-100 text-green-700' :
-                                                            ($item->status == 'ditolak' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }}">
+                                                        <span
+                                                            class="px-3 py-1 rounded-full text-xs {{$item->status == 'diterima' ? 'bg-green-100 text-green-700' :
+                                    ($item->status == 'ditolak' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }}">
                                                             {{ ucfirst($item->status) }}
                                                         </span>
                                                     </td>
@@ -191,4 +154,62 @@
         let slideTimer = setInterval(nextSlide, slideInterval);
         showSlide(currentSlide);
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+
+<script>
+    const ctx = document.getElementById('ipkChart').getContext('2d');
+
+    // Data dummy IPS (per semester)
+    const ips = [3.65, 3.72, 3.81, 3.90, 3.75, 3.88];
+
+    // Hitung IPK
+    const ipk = (ips.reduce((acc, val) => acc + val, 0) / ips.length).toFixed(2);
+    document.getElementById('ipk-value').innerText = ipk;
+
+    // Chart
+    const ipkChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Semester 1', 'Semester 2', 'Semester 3', 'Semester 4', 'Semester 5', 'Semester 6'],
+            datasets: [{
+                label: 'IPS',
+                data: ips,
+                borderColor: '#006066',
+                backgroundColor: 'rgba(0, 96, 102, 0.2)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3,
+                pointBackgroundColor: '#006066'
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                datalabels: {
+                    color: '#000',
+                    anchor: 'end',
+                    align: 'top',
+                    font: {
+                        weight: 'bold'
+                    },
+                    formatter: function(value) {
+                        return value.toFixed(2);
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    suggestedMin: 3.0,
+                    suggestedMax: 4.0
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+</script>
 @endsection

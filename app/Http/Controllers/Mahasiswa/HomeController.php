@@ -8,6 +8,7 @@ use App\Models\JadwalMataKuliah;
 use App\Http\Controllers\Controller;
 use App\Models\Mahasiswa;
 use App\Models\PengajuanSempro;
+use App\Models\HasilSempro;
 
 use Illuminate\Http\Request;
 
@@ -19,17 +20,18 @@ class HomeController extends Controller
         $mahasiswa = $user->mahasiswa;
 
         if ($mahasiswa) {
+            // Ambil pengajuan sempro jika mahasiswa ada
             $pengajuan = PengajuanSempro::where('mahasiswa_id', $mahasiswa->id)->get();
+
+            // Ambil hasil sempro berdasarkan relasi mahasiswa
+            $hasilSempro = HasilSempro::whereHas('jadwalSempro.pengajuanSempro', function ($query) use ($mahasiswa) {
+                $query->where('mahasiswa_id', $mahasiswa->id);
+            })->latest()->first(); // ambil satu yang paling baru jika ada
         } else {
             $pengajuan = collect();
+            $hasilSempro = null;
         }
 
-        $hariIni = Carbon::now()->locale('id')->isoFormat('dddd'); 
-
-        $jadwal = JadwalMataKuliah::where('hari', $hariIni)
-            ->with('dosen.user')
-            ->get();
-
-        return view('mahasiswa.home', compact('mahasiswa', 'pengajuan', 'jadwal', 'hariIni'));
+        return view('mahasiswa.home', compact('mahasiswa', 'pengajuan', 'hasilSempro'));
     }
 }
