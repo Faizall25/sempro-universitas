@@ -17,8 +17,8 @@
         <!-- Kartu Mahasiswa -->
         <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
             <div class="flex items-center">
-                <div class="p-3 bg-blue-100 rounded-full">
-                    <i class="fas fa-users text-blue-600 text-2xl"></i>
+                <div class="p-3 rounded-full" style="background-color: #d0f0f0;">
+                    <i class="fas fa-users text-2xl" style="color: #006066;"></i>
                 </div>
                 <div class="ml-4">
                     <h3 class="text-lg font-semibold text-gray-700">Mahasiswa</h3>
@@ -30,8 +30,8 @@
         <!-- Kartu Dosen -->
         <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
             <div class="flex items-center">
-                <div class="p-3 bg-blue-100 rounded-full">
-                    <i class="fas fa-chalkboard-teacher text-blue-600 text-2xl"></i>
+                <div class="p-3 rounded-full" style="background-color: #d0f0f0;">
+                    <i class="fas fa-chalkboard-teacher text-2xl" style="color: #006066;"></i>
                 </div>
                 <div class="ml-4">
                     <h3 class="text-lg font-semibold text-gray-700">Dosen</h3>
@@ -43,8 +43,8 @@
         <!-- Kartu Pengajuan Sempro -->
         <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
             <div class="flex items-center">
-                <div class="p-3 bg-blue-100 rounded-full">
-                    <i class="fas fa-file-alt text-blue-600 text-2xl"></i>
+                <div class="p-3 rounded-full" style="background-color: #d0f0f0;">
+                    <i class="fas fa-file-alt text-2xl" style="color: #006066;"></i>
                 </div>
                 <div class="ml-4">
                     <h3 class="text-lg font-semibold text-gray-700">Pengajuan Sempro</h3>
@@ -56,8 +56,8 @@
         <!-- Kartu Jadwal Sempro -->
         <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
             <div class="flex items-center">
-                <div class="p-3 bg-blue-100 rounded-full">
-                    <i class="fas fa-calendar-alt text-blue-600 text-2xl"></i>
+                <div class="p-3 rounded-full" style="background-color: #d0f0f0;">
+                    <i class="fas fa-calendar-alt text-2xl" style="color: #006066;"></i>
                 </div>
                 <div class="ml-4">
                     <h3 class="text-lg font-semibold text-gray-700">Jadwal Sempro</h3>
@@ -69,8 +69,8 @@
         <!-- Kartu Hasil Sempro -->
         <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
             <div class="flex items-center">
-                <div class="p-3 bg-blue-100 rounded-full">
-                    <i class="fas fa-check-circle text-blue-600 text-2xl"></i>
+                <div class="p-3 rounded-full" style="background-color: #d0f0f0;">
+                    <i class="fas fa-check-circle text-2xl" style="color: #006066;"></i>
                 </div>
                 <div class="ml-4">
                     <h3 class="text-lg font-semibold text-gray-700">Hasil Sempro</h3>
@@ -88,17 +88,17 @@
 
     <!-- Navigasi Cepat -->
     <div class="flex space-x-4 mb-8">
-        <a href="{{ route('admin.jadwal.sempro.index') }}" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
+        <a href="{{ route('admin.jadwal.sempro.index') }}" class="inline-block px-6 py-3 text-white rounded-lg hover:opacity-90 transition duration-200" style="background-color: #006066;">
             <i class="fas fa-calendar mr-2"></i> Kelola Jadwal Sempro
         </a>
-        <a href="{{ route('admin.hasil.sempro.index') }}" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
+        <a href="{{ route('admin.hasil.sempro.index') }}" class="inline-block px-6 py-3 text-white rounded-lg hover:opacity-90 transition duration-200" style="background-color: #006066;">
             <i class="fas fa-file-alt mr-2"></i> Kelola Hasil Sempro
         </a>
     </div>
 
     <!-- Jadwal Mendatang -->
     <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-        <div class="px-6 py-4 bg-blue-900 text-white">
+        <div class="px-6 py-4" style="background-color: #006066; color: white;">
             <h3 class="text-lg font-semibold">Jadwal Sempro Mendatang (7 Hari ke Depan)</h3>
         </div>
         @if ($jadwalMendatang->isEmpty())
@@ -106,14 +106,14 @@
         @else
             <div class="overflow-x-auto">
                 <table class="min-w-full">
-                    <thead class="bg-blue-900 text-white">
+                    <thead>
                         <tr>
-                            <th class="px-6 py-3 text-left text-sm font-semibold uppercase">No</th>
-                            <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Judul Pengajuan</th>
-                            <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Tanggal</th>
-                            <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Waktu</th>
-                            <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Ruang</th>
-                            <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Status</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold uppercase text-white">No</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold uppercase text-white">Judul Pengajuan</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold uppercase text-white">Tanggal</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold uppercase text-white">Waktu</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold uppercase text-white">Ruang</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold uppercase text-white">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -149,7 +149,7 @@
         border-bottom: 1px solid #e5e7eb;
     }
     th {
-        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        background: linear-gradient(135deg, #004d4d 0%, #009999 100%);
     }
     tr:last-child td {
         border-bottom: none;
@@ -172,16 +172,16 @@
                     {{ $statusCounts['tidak_lolos'] ?? 0 }}
                 ],
                 backgroundColor: [
-                    'rgba(34, 197, 94, 0.6)',  // Hijau
-                    'rgba(234, 179, 8, 0.6)',  // Kuning
-                    'rgba(249, 115, 22, 0.6)', // Oranye
-                    'rgba(239, 68, 68, 0.6)'   // Merah
+                    'rgba(0, 102, 102, 0.6)',
+                    'rgba(0, 153, 153, 0.6)',
+                    'rgba(102, 204, 204, 0.6)',
+                    'rgba(204, 255, 255, 0.6)'
                 ],
                 borderColor: [
-                    'rgba(34, 197, 94, 1)',
-                    'rgba(234, 179, 8, 1)',
-                    'rgba(249, 115, 22, 1)',
-                    'rgba(239, 68, 68, 1)'
+                    'rgba(0, 102, 102, 1)',
+                    'rgba(0, 153, 153, 1)',
+                    'rgba(102, 204, 204, 1)',
+                    'rgba(204, 255, 255, 1)'
                 ],
                 borderWidth: 1
             }]
@@ -194,7 +194,8 @@
                 },
                 title: {
                     display: true,
-                    text: 'Distribusi Status Hasil Sempro'
+                    text: 'Distribusi Status Hasil Sempro',
+                    color: '#006066'
                 }
             }
         }

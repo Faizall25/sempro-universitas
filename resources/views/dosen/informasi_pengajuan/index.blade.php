@@ -7,82 +7,102 @@
     <!-- Navbar Tabs -->
     <div class="flex space-x-2 mb-6">
         <a href="{{ route('dosen.informasi_pengajuan.index', ['tab' => 'seminar-proposal']) }}"
-           class="px-4 py-2 rounded-lg {{ $tab === 'seminar-proposal' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
+           style="padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 500; 
+                  background-color: {{ $tab === 'seminar-proposal' ? '#006066' : '#e5e5e5' }}; 
+                  color: {{ $tab === 'seminar-proposal' ? '#fff' : '#333' }};">
             Seminar Proposal
         </a>
         <a href="{{ route('dosen.informasi_pengajuan.index', ['tab' => 'seminar-hasil']) }}"
-           class="px-4 py-2 rounded-lg {{ $tab === 'seminar-hasil' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
+           style="padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 500; 
+                  background-color: {{ $tab === 'seminar-hasil' ? '#006066' : '#e5e5e5' }}; 
+                  color: {{ $tab === 'seminar-hasil' ? '#fff' : '#333' }};">
             Seminar Hasil
         </a>
         <a href="{{ route('dosen.informasi_pengajuan.index', ['tab' => 'sidang-skripsi']) }}"
-           class="px-4 py-2 rounded-lg {{ $tab === 'sidang-skripsi' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
+           style="padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 500; 
+                  background-color: {{ $tab === 'sidang-skripsi' ? '#006066' : '#e5e5e5' }}; 
+                  color: {{ $tab === 'sidang-skripsi' ? '#fff' : '#333' }};">
             Sidang Skripsi
         </a>
     </div>
 
     <!-- Notifikasi -->
     @if (session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4" role="alert">
-            <p class="text-sm">{{ session('success') }}</p>
+        <div style="background-color: #d1fae5; border: 1px solid #10b981; color: #065f46; 
+                    padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;">
+            <p style="font-size: 14px;">{{ session('success') }}</p>
         </div>
     @endif
     @if (session('error'))
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4" role="alert">
-            <p class="text-sm">{{ session('error') }}</p>
+        <div style="background-color: #fee2e2; border: 1px solid #ef4444; color: #991b1b; 
+                    padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;">
+            <p style="font-size: 14px;">{{ session('error') }}</p>
         </div>
     @endif
 
     <!-- Konten -->
     @if ($tab === 'seminar-proposal')
         @if ($jadwalSempro->isEmpty())
-            <div class="bg-gray-100 text-gray-500 px-4 py-3 rounded-lg text-center">
-                <p class="text-sm">Belum Ada Pengajuan</p>
+            <div style="background-color: #f3f4f6; color: #6b7280; padding: 12px 16px; 
+                        border-radius: 8px; text-align: center;">
+                <p style="font-size: 14px;">Belum Ada Pengajuan</p>
             </div>
         @else
-            <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-                <div class="px-6 py-4 bg-gray-200 text-gray-700">
-                    <h3 class="text-lg font-semibold">Seminar Proposal</h3>
+            <div style="background-color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
+                        border-radius: 8px; overflow: hidden;">
+                <div style="background-color: #006066; color: white; padding: 16px;">
+                    <h3 style="font-size: 18px; font-weight: 600;">Seminar Proposal</h3>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full">
-                        <thead class="bg-gray-200 text-gray-700">
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead style="background-color: #f3f4f6;">
                             <tr>
-                                <th class="px-6 py-3 text-left text-sm font-semibold uppercase">No</th>
-                                <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Mahasiswa</th>
-                                <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Judul</th>
-                                <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Tanggal</th>
-                                <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Waktu</th>
-                                <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Ruang</th>
-                                <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Status</th>
-                                <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Aksi</th>
+                                <th style="padding: 16px; text-align: left; font-size: 14px; font-weight: 600;">No</th>
+                                <th style="padding: 16px; text-align: left; font-size: 14px; font-weight: 600;">Mahasiswa</th>
+                                <th style="padding: 16px; text-align: left; font-size: 14px; font-weight: 600;">Judul</th>
+                                <th style="padding: 16px; text-align: left; font-size: 14px; font-weight: 600;">Tanggal</th>
+                                <th style="padding: 16px; text-align: left; font-size: 14px; font-weight: 600;">Waktu</th>
+                                <th style="padding: 16px; text-align: left; font-size: 14px; font-weight: 600;">Ruang</th>
+                                <th style="padding: 16px; text-align: left; font-size: 14px; font-weight: 600;">Status</th>
+                                <th style="padding: 16px; text-align: left; font-size: 14px; font-weight: 600;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($jadwalSempro as $index => $jadwal)
-                                <tr class="border-b border-gray-200 hover:bg-gray-100">
-                                    <td class="px-6 py-4">{{ $index + 1 }}</td>
-                                    <td class="px-6 py-4">{{ $jadwal->pengajuanSempro->mahasiswa->user->name ?? 'Tidak Diketahui' }}</td>
-                                    <td class="px-6 py-4">{{ $jadwal->pengajuanSempro->judul ?? 'Tidak Diketahui' }}</td>
-                                    <td class="px-6 py-4">{{ $jadwal->tanggal->format('d M Y') }}</td>
-                                    <td class="px-6 py-4">{{ $jadwal->waktu->format('H:i') }}</td>
-                                    <td class="px-6 py-4">{{ $jadwal->ruang }}</td>
-                                    <td class="px-6 py-4">
+                                <tr style="border-bottom: 1px solid #e5e7eb;">
+                                    <td style="padding: 16px; color: #000;">{{ $index + 1 }}</td>
+                                    <td style="padding: 16px; color: #000;">{{ $jadwal->pengajuanSempro->mahasiswa->user->name ?? 'Tidak Diketahui' }}</td>
+                                    <td style="padding: 16px; color: #000;">{{ $jadwal->pengajuanSempro->judul ?? 'Tidak Diketahui' }}</td>
+                                    <td style="padding: 16px; color: #000;">{{ $jadwal->tanggal->format('d M Y') }}</td>
+                                    <td style="padding: 16px; color: #000;">{{ $jadwal->waktu->format('H:i') }}</td>
+                                    <td style="padding: 16px; color: #000;">{{ $jadwal->ruang }}</td>
+                                    <td style="padding: 16px;">
                                         @php
                                             $approval = $jadwal->approvals->first();
                                             $status = $approval ? $approval->status : 'pending';
+                                            $badgeStyle = match($status) {
+                                                'pending' => 'background-color:#fefcbf; color:#92400e;',
+                                                'setuju' => 'background-color:#c6f6d5; color:#276749;',
+                                                'tolak' => 'background-color:#fecaca; color:#991b1b;',
+                                                default => 'background-color:#e5e7eb; color:#4b5563;',
+                                            };
                                         @endphp
-                                        <span class="badge {{ $status === 'pending' ? 'bg-yellow-200 text-yellow-800' : ($status === 'setuju' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800') }}">
+                                        <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; {{ $badgeStyle }}">
                                             {{ ucwords($status) }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td style="padding: 16px;">
                                         @if (!$approval || $approval->status === 'pending')
                                             <a href="{{ route('dosen.approve-jadwal-sempro', $jadwal->id) }}"
-                                               class="px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600 mr-2">Setuju</a>
+                                            style="display: inline-block; padding: 6px 12px; border-radius: 6px; background-color: #006066; color: white; text-decoration: none; margin-bottom: 6px;">
+                                                Setuju
+                                            </a><br>
                                             <a href="{{ route('dosen.reject-jadwal-sempro', $jadwal->id) }}"
-                                               class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600">Tolak</a>
+                                            style="display: inline-block; padding: 6px 12px; border-radius: 6px; background-color: #dc2626; color: white; text-decoration: none;">
+                                                Tolak
+                                            </a>
                                         @else
-                                            <span class="text-gray-500 italic">Sudah Diproses</span>
+                                            <span style="color: #6b7280; font-style: italic;">Sudah Diproses</span>
                                         @endif
                                     </td>
                                 </tr>
@@ -93,8 +113,8 @@
             </div>
         @endif
     @else
-        <div class="bg-gray-100 text-gray-500 px-4 py-3 rounded-lg text-center">
-            <p class="text-sm">Fitur {{ ucwords(str_replace('-', ' ', $tab)) }} belum tersedia.</p>
+        <div style="background-color: #f3f4f6; color: #6b7280; padding: 12px 16px; border-radius: 8px; text-align: center;">
+            <p style="font-size: 14px;">Fitur {{ ucwords(str_replace('-', ' ', $tab)) }} belum tersedia.</p>
         </div>
     @endif
 </div>
