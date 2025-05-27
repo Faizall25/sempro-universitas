@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\BidangKeilmuan;
 use App\Models\User;
 use App\Models\Dosen;
 use App\Models\Mahasiswa;
@@ -24,27 +25,73 @@ class UserController extends Controller
 
     public function create()
     {
-        return view('admin.users.create');
+        $bidangKeilmuan = BidangKeilmuan::all();
+        return view('admin.users.create', compact('bidangKeilmuan'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:100',
-            'email' => 'required|email|unique:users,email',
+        $rules = [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'role' => 'required|in:admin,dosen,mahasiswa',
+            'role' => 'required|in:mahasiswa,dosen',
+        ];
+
+        if ($request->role === 'mahasiswa') {
+            $rules = array_merge($rules, [
+                'nim' => 'required|string|max:30|unique:mahasiswa',
+                'tempat_lahir' => 'required|string|max:50',
+                'tanggal_lahir' => 'required|date',
+                'asal_kota' => 'required|string|max:100',
+                'program_studi' => 'required|string|max:100',
+                'fakultas' => 'required|string|max:100',
+                'tahun_masuk' => 'required|integer|min:1900|max:' . date('Y'),
+            ]);
+        } elseif ($request->role === 'dosen') {
+            $rules = array_merge($rules, [
+                'nip' => 'required|string|max:30|unique:dosen',
+                'tempat_lahir' => 'required|string|max:50',
+                'tanggal_lahir' => 'required|date',
+                'asal_kota' => 'required|string|max:100',
+                'bidang_keilmuan_id' => 'required|exists:bidang_keilmuan,id',
+            ]);
+        }
+
+        $validated = $request->validate($rules);
+
+        // Create User
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role' => $validated['role'],
         ]);
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-        ]);
+        // Create Mahasiswa or Dosen
+        if ($validated['role'] === 'mahasiswa') {
+            Mahasiswa::create([
+                'user_id' => $user->id,
+                'nim' => $validated['nim'],
+                'tempat_lahir' => $validated['tempat_lahir'],
+                'tanggal_lahir' => $validated['tanggal_lahir'],
+                'asal_kota' => $validated['asal_kota'],
+                'program_studi' => $validated['program_studi'],
+                'fakultas' => $validated['fakultas'],
+                'tahun_masuk' => $validated['tahun_masuk'],
+            ]);
+        } elseif ($validated['role'] === 'dosen') {
+            Dosen::create([
+                'user_id' => $user->id,
+                'nip' => $validated['nip'],
+                'tempat_lahir' => $validated['tempat_lahir'],
+                'tanggal_lahir' => $validated['tanggal_lahir'],
+                'asal_kota' => $validated['asal_kota'],
+                'bidang_keilmuan_id' => $validated['bidang_keilmuan_id'],
+            ]);
+        }
 
-        return redirect()->route('admin.users.index')
-            ->with('success', 'User berhasil ditambahkan.');
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan.');
     }
 
     public function edit($id)

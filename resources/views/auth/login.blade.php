@@ -55,13 +55,6 @@
                             class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition duration-200">
                             Login
                         </button>
-
-                        {{-- <p class="mt-4 text-sm text-center text-gray-600">
-                            Belum punya akun?
-                            <a href="{{ route('register') }}" class="text-green-600 hover:underline font-medium">
-                                Daftar di sini
-                            </a>
-                        </p> --}}
                     </form>
 
                 </div>

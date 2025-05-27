@@ -5,11 +5,11 @@
 @section('content')
     <div class="container mx-auto">
         <h2 class="text-2xl font-semibold text-gray-800 mb-4">Daftar Dosen</h2>
-        <a href="{{ route('admin.dosen.all.create') }}"
+        {{-- <a href="{{ route('admin.dosen.all.create') }}"
             class="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 mb-4 transition duration-300 ease-in-out"
             data-tooltip="Tambah dosen baru">
             <i class="fas fa-user-plus mr-2"></i> Tambah Dosen
-        </a>
+        </a> --}}
         @if (session('success'))
             <div class="bg-green-50 border-l-4 border-green-400 text-green-700 p-4 mb-4 rounded-lg shadow-sm" role="alert">
                 {{ session('success') }}
@@ -44,7 +44,7 @@
                                         data-tooltip="Edit data dosen">
                                         <i class="fas fa-user-edit"></i>
                                     </a>
-                                    <form action="{{ route('admin.dosen.all.destroy', $item->id) }}" method="POST"
+                                    {{-- <form action="{{ route('admin.dosen.all.destroy', $item->id) }}" method="POST"
                                         class="inline-block">
                                         @csrf
                                         @method('DELETE')
@@ -54,7 +54,7 @@
                                             onclick="return confirm('Apakah Anda yakin ingin menghapus dosen ini?')">
                                             <i class="fas fa-user-times"></i>
                                         </button>
-                                    </form>
+                                    </form> --}}
                                 </td>
                             </tr>
                         @endforeach

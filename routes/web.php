@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\MahasiswaController;
 use App\Http\Controllers\Admin\DosenController;
 use App\Http\Controllers\Admin\JadwalController;
 use App\Http\Controllers\Admin\HasilController;
@@ -25,13 +27,21 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     // Route untuk CRUD User
-    Route::get('users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
-    Route::get('users/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('admin.users.create');
-    Route::post('users', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.users.store');
-    Route::get('users/{id}/edit', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('admin.users.edit');
-    Route::put('users/{id}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('admin.users.update');
-    Route::delete('users/{id}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('admin.users.destroy');
+    Route::get('users', [UserController::class, 'index'])->name('admin.users.index');
+    Route::get('users/create', [UserController::class, 'create'])->name('admin.users.create');
+    Route::post('users', [UserController::class, 'store'])->name('admin.users.store');
+    Route::get('users/{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
+    Route::put('users/{id}', [UserController::class, 'update'])->name('admin.users.update');
+    Route::delete('users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
 
+    // Rute untuk CRUD Mahasiswa
+    Route::get('/mahasiswa', [MahasiswaController::class, 'index'])->name('admin.mahasiswa.index');
+    Route::get('/mahasiswa/create', [MahasiswaController::class, 'create'])->name('admin.mahasiswa.create');
+    Route::post('/mahasiswa', [MahasiswaController::class, 'store'])->name('admin.mahasiswa.store');
+    Route::get('/mahasiswa/{id}/edit', [MahasiswaController::class, 'edit'])->name('admin.mahasiswa.edit');
+    Route::put('/mahasiswa/{id}', [MahasiswaController::class, 'update'])->name('admin.mahasiswa.update');
+    Route::delete('/mahasiswa/{id}', [MahasiswaController::class, 'destroy'])->name('admin.mahasiswa.destroy');
+    
     // Rute untuk CRUD Semua Dosen
     Route::get('/dosen/all', [DosenController::class, 'allIndex'])->name('admin.dosen.all.index');
     Route::get('/dosen/all/create', [DosenController::class, 'allCreate'])->name('admin.dosen.all.create');

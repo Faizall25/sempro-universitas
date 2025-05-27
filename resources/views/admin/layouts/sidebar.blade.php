@@ -17,12 +17,38 @@
                     <span>Home</span>
                 </a>
             </li>
-            <li>
-                <a href="{{ route('admin.users.index') }}"
-                    class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('admin.users.*') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
-                    <i class="fas fa-users"></i>
-                    <span>User</span>
-                </a>
+            <li x-data="{ open: false }">
+                <button @click="open = !open"
+                    class="flex items-center justify-between w-full space-x-3 p-2 rounded-lg hover:bg-gray-200">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-users"></i>
+                        <span>User</span>
+                    </div>
+                    <i :class="open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+                </button>
+                <ul x-show="open" class="pl-6 mt-1 space-y-1">
+                    <li>
+                        <a href="{{ route('admin.users.index') }}"
+                            class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('admin.users.*') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
+                            <i class="fas fa-users"></i>
+                            <span>User</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.mahasiswa.index') }}"
+                            class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('admin.mahasiswa.*') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
+                            <i class="fas fa-user-graduate"></i>
+                            <span>Mahasiswa</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.dosen.all.index') }}"
+                            class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('admin.dosen.all.*') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
+                            <i class="fas fa-user-tie"></i>
+                            <span>Dosen</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
             <li x-data="{ open: false }">
                 <button @click="open = !open"
@@ -34,13 +60,6 @@
                     <i :class="open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
                 </button>
                 <ul x-show="open" class="pl-6 mt-1 space-y-1">
-                    <li>
-                        <a href="{{ route('admin.dosen.all.index') }}"
-                            class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('admin.dosen.all.*') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
-                            <i class="fas fa-users"></i>
-                            <span>Dosen</span>
-                        </a>
-                    </li>
                     <li>
                         <a href="{{ route('admin.dosen.pembimbing.index') }}"
                             class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('admin.dosen.pembimbing.*') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
