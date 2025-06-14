@@ -17,21 +17,22 @@ class InformasiPengajuan extends Controller
         $dosen = Dosen::where('user_id', Auth::id())->firstOrFail();
         $tab = $request->query('tab', 'seminar-proposal'); // Sesuaikan dengan nilai di URL
 
-        // Ambil jadwal sempro yang melibatkan dosen ini (pembimbing atau penguji)
-        $jadwalSempro = JadwalSempro::whereHas('pengajuanSempro', function ($query) use ($dosen) {
-            $query->where('dosen_pembimbing_id', $dosen->id);
-        })
-            ->orWhere('dosen_penguji_1', $dosen->id)
-            ->orWhere('dosen_penguji_2', $dosen->id)
-            ->orWhere('dosen_penguji_3', $dosen->id)
+        // Ambil jadwal sempro di mana dosen ini adalah penguji
+        $jadwalSempro = JadwalSempro::where(function ($query) use ($dosen) {
+                $query->where('dosen_penguji_1', $dosen->id)
+                    ->orWhere('dosen_penguji_2', $dosen->id)
+                    ->orWhere('dosen_penguji_3', $dosen->id);
+            })
             ->with(['pengajuanSempro.mahasiswa.user', 'approvals' => function ($query) use ($dosen) {
                 $query->where('dosen_id', $dosen->id);
             }])
+            ->orderBy('tanggal')
+            ->orderBy('waktu')
             ->get();
 
         // Debugging: Cek apakah ada data
         if ($jadwalSempro->isEmpty()) {
-            Log::info('Tidak ada jadwal sempro ditemukan untuk dosen ID: ' . $dosen->id . ' pada tab: ' . $tab);
+            Log::info('Tidak ada jadwal sempro ditemukan untuk dosen ID: ' . $dosen->id . ' sebagai penguji pada tab: ' . $tab);
         }
 
         return view('dosen.informasi_pengajuan.index', compact('jadwalSempro', 'tab'));
@@ -42,7 +43,7 @@ class InformasiPengajuan extends Controller
         $dosen = Dosen::where('user_id', Auth::id())->firstOrFail();
         $jadwal = JadwalSempro::findOrFail($jadwalId);
 
-        // Cek apakah dosen terlibat dalam jadwal ini
+        // Cek apakah dosen terlibat sebagai penguji
         if (!$this->isDosenInvolved($jadwal, $dosen)) {
             return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menyetujui jadwal ini.');
         }
@@ -65,7 +66,7 @@ class InformasiPengajuan extends Controller
         $dosen = Dosen::where('user_id', Auth::id())->firstOrFail();
         $jadwal = JadwalSempro::findOrFail($jadwalId);
 
-        // Cek apakah dosen terlibat dalam jadwal ini
+        // Cek apakah dosen terlibat sebagai penguji
         if (!$this->isDosenInvolved($jadwal, $dosen)) {
             return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menolak jadwal ini.');
         }
@@ -85,8 +86,7 @@ class InformasiPengajuan extends Controller
 
     private function isDosenInvolved(JadwalSempro $jadwal, Dosen $dosen)
     {
-        return $jadwal->pengajuanSempro->dosen_pembimbing_id === $dosen->id ||
-            $jadwal->dosen_penguji_1 === $dosen->id ||
+        return $jadwal->dosen_penguji_1 === $dosen->id ||
             $jadwal->dosen_penguji_2 === $dosen->id ||
             $jadwal->dosen_penguji_3 === $dosen->id;
     }

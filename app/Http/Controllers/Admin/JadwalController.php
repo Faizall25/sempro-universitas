@@ -182,7 +182,20 @@ class JadwalController extends Controller
             ->with(['bidangKeilmuan', 'mahasiswa.user'])
             ->get();
         $dosenList = Dosen::has('penguji')->with(['user', 'bidangKeilmuan'])->get();
-        return view('admin.jadwal.sempro.create', compact('pengajuanSemproList', 'dosenList'));
+        // Ambil jadwal sempro untuk disable opsi
+        $existingSchedules = JadwalSempro::where('status', '!=', 'selesai')
+            ->select('tanggal', 'waktu')
+            ->get()
+            ->groupBy('tanggal')
+            ->map(function ($group) {
+                return [
+                    'times' => $group->pluck('waktu')->map(function ($time) {
+                        return $time->format('H:i');
+                    })->toArray(),
+                    'count' => $group->count()
+                ];
+            });
+        return view('admin.jadwal.sempro.create', compact('pengajuanSemproList', 'dosenList', 'existingSchedules'));
     }
 
     public function semproStore(Request $request)
@@ -193,7 +206,7 @@ class JadwalController extends Controller
                 'exists:pengajuan_sempro,id',
                 Rule::unique('jadwal_sempro', 'pengajuan_sempro_id'),
             ],
-            'tanggal' => 'required|date',
+            'tanggal' => 'required|date|after_or_equal:today',
             'waktu' => 'required|in:12:00,13:00,14:00',
             'ruang' => 'required|string|max:50',
             'dosen_penguji_1' => 'required|exists:dosen,id|different:dosen_penguji_2|different:dosen_penguji_3',
@@ -201,6 +214,34 @@ class JadwalController extends Controller
             'dosen_penguji_3' => 'required|exists:dosen,id|different:dosen_penguji_1|different:dosen_penguji_2',
             'status' => 'required|in:diproses,dijadwalkan,selesai',
         ]);
+
+        // Validasi batas 3 jadwal per tanggal
+        $count = JadwalSempro::where('tanggal', $request->tanggal)
+            ->where('status', '!=', 'selesai')
+            ->count();
+        if ($count >= 3) {
+            return back()->withErrors(['tanggal' => 'Sudah ada 3 jadwal sempro pada tanggal ini.']);
+        }
+
+        // Validasi waktu tidak bentrok
+        $exists = JadwalSempro::where('tanggal', $request->tanggal)
+            ->where('waktu', $request->waktu)
+            ->where('status', '!=', 'selesai')
+            ->exists();
+        if ($exists) {
+            return back()->withErrors(['waktu' => 'Waktu ini sudah digunakan pada tanggal tersebut.']);
+        }
+
+        // Validasi bidang keilmuan
+        $pengajuan = PengajuanSempro::findOrFail($request->pengajuan_sempro_id);
+        $bidangKeilmuanId = $pengajuan->bidang_keilmuan_id;
+
+        foreach (['dosen_penguji_1', 'dosen_penguji_2', 'dosen_penguji_3'] as $field) {
+            $dosen = Dosen::findOrFail($request->$field);
+            if ($dosen->bidang_keilmuan_id !== $bidangKeilmuanId) {
+                return back()->withErrors([$field => 'Dosen penguji harus memiliki bidang keilmuan yang sama dengan pengajuan sempro.']);
+            }
+        }
 
         DB::beginTransaction();
         try {
@@ -252,7 +293,21 @@ class JadwalController extends Controller
             ->with('bidangKeilmuan')
             ->get();
         $dosenList = Dosen::has('penguji')->with('bidangKeilmuan')->get();
-        return view('admin.jadwal.sempro.edit', compact('jadwal', 'pengajuanSemproList', 'dosenList'));
+        // Ambil jadwal sempro untuk disable opsi, kecuali jadwal saat ini
+        $existingSchedules = JadwalSempro::where('status', '!=', 'selesai')
+            ->where('id', '!=', $id)
+            ->select('tanggal', 'waktu')
+            ->get()
+            ->groupBy('tanggal')
+            ->map(function ($group) {
+                return [
+                    'times' => $group->pluck('waktu')->map(function ($time) {
+                        return $time->format('H:i');
+                    })->toArray(),
+                    'count' => $group->count()
+                ];
+            });
+        return view('admin.jadwal.sempro.edit', compact('jadwal', 'pengajuanSemproList', 'dosenList', 'existingSchedules'));
     }
 
     public function semproUpdate(Request $request, $id)
@@ -265,8 +320,8 @@ class JadwalController extends Controller
                 'exists:pengajuan_sempro,id',
                 Rule::unique('jadwal_sempro', 'pengajuan_sempro_id')->ignore($id),
             ],
-            'tanggal' => 'required|date',
-            'waktu' => 'required|date_format:H:i',
+            'tanggal' => 'required|date|after_or_equal:today',
+            'waktu' => 'required|in:12:00,13:00,14:00',
             'ruang' => 'required|string|max:50',
             'dosen_penguji_1' => 'required|exists:dosen,id|different:dosen_penguji_2|different:dosen_penguji_3',
             'dosen_penguji_2' => 'required|exists:dosen,id|different:dosen_penguji_1|different:dosen_penguji_3',
@@ -274,6 +329,26 @@ class JadwalController extends Controller
             'status' => 'required|in:diproses,dijadwalkan,selesai',
         ]);
 
+        // Validasi batas 3 jadwal per tanggal
+        $count = JadwalSempro::where('tanggal', $request->tanggal)
+            ->where('status', '!=', 'selesai')
+            ->where('id', '!=', $id)
+            ->count();
+        if ($count >= 3) {
+            return back()->withErrors(['tanggal' => 'Sudah ada 3 jadwal sempro pada tanggal ini.']);
+        }
+
+        // Validasi waktu tidak bentrok
+        $exists = JadwalSempro::where('tanggal', $request->tanggal)
+            ->where('waktu', $request->waktu)
+            ->where('status', '!=', 'selesai')
+            ->where('id', '!=', $id)
+            ->exists();
+        if ($exists) {
+            return back()->withErrors(['waktu' => 'Waktu ini sudah digunakan pada tanggal tersebut.']);
+        }
+
+        // Validasi bidang keilmuan
         $pengajuan = PengajuanSempro::findOrFail($request->pengajuan_sempro_id);
         $bidangKeilmuanId = $pengajuan->bidang_keilmuan_id;
 
@@ -301,10 +376,10 @@ class JadwalController extends Controller
                 ->pluck('dosen_id')
                 ->toArray();
 
-            // Determine dosen_ids to delete (no longer in newDosenIds)
+            // Determine dosen_ids to delete
             $dosenIdsToDelete = array_diff($existingApprovalDosenIds, $newDosenIds);
 
-            // Determine dosen_ids to add (in newDosenIds but not in existing approvals)
+            // Determine dosen_ids to add
             $dosenIdsToAdd = array_diff($newDosenIds, $existingApprovalDosenIds);
 
             // Delete approvals for removed dosen
@@ -343,7 +418,7 @@ class JadwalController extends Controller
     public function semproDestroy($id)
     {
         $jadwal = JadwalSempro::findOrFail($id);
-        $jadwal->delete(); // Approvals deleted via cascade
+        $jadwal->delete();
 
         return redirect()->route('admin.jadwal.sempro.index')
             ->with('success', 'Jadwal sempro berhasil dihapus.');
@@ -384,7 +459,6 @@ class JadwalController extends Controller
             ->with('success', 'Status jadwal berhasil diubah menjadi Dijadwalkan.');
     }
 
-    // Export Jadwal Sempro
     public function semproExportForm()
     {
         return view('admin.jadwal.sempro.export');
@@ -402,6 +476,31 @@ class JadwalController extends Controller
             new JadwalSemproExport($request->start_date, $request->end_date, $request->status),
             'jadwal_sempro_' . $request->start_date . '_to_' . $request->end_date . ($request->status ? '_' . $request->status : '') . '.xlsx'
         );
+    }
+
+    public function getAvailableTimes(Request $request)
+    {
+        $tanggal = $request->query('tanggal');
+        if (!$tanggal || !\Carbon\Carbon::createFromFormat('Y-m-d', $tanggal)) {
+            return response()->json(['times' => [], 'count' => 0]);
+        }
+
+        $schedules = JadwalSempro::where('tanggal', $tanggal)
+            ->where('status', '!=', 'selesai')
+            ->pluck('waktu')
+            ->map(function ($time) {
+                return $time->format('H:i');
+            })
+            ->toArray();
+
+        $availableTimes = array_diff(['12:00', '13:00', '14:00'], $schedules);
+        $count = count($schedules);
+
+        return response()->json([
+            'times' => array_values($availableTimes),
+            'taken' => $schedules,
+            'count' => $count
+        ]);
     }
 
     // Approval Dosen

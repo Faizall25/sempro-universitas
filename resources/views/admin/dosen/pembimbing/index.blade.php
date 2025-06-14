@@ -34,7 +34,7 @@
                     <tbody>
                         @foreach ($dosen as $index => $item)
                             <tr class="border-b border-gray-200 hover:bg-gray-100 transition duration-200 ease-in-out">
-                                <td class="px-6 py-4 text-gray-700">{{ $index + 1 }}</td>
+                                <td class="px-6 py-4 text-gray-700">{{ $index + $dosen->firstItem()}}</td>
                                 <td class="px-6 py-4 text-gray-700">{{ $item->user->name }}</td>
                                 <td class="px-6 py-4 text-gray-700">{{ $item->nip }}</td>
                                 <td class="px-6 py-4 text-gray-700">{{ $item->bidangKeilmuan->name }}</td>

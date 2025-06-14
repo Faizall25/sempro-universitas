@@ -15,13 +15,25 @@ class PengajuanSemproController extends Controller
     public function pengajuanSemproIndex()
     {
         $mahasiswa = Mahasiswa::where('user_id', Auth::id())->firstOrFail();
-        $pengajuan = PengajuanSempro::with(['bidangKeilmuan', 'dosenPembimbing.user'])
+        $pengajuan = PengajuanSempro::with([
+            'bidangKeilmuan',
+            'dosenPembimbing.user',
+            'jadwalSempro.dosenPenguji1.user' => function ($query) {
+                $query->withTrashed();
+            },
+            'jadwalSempro.dosenPenguji2.user' => function ($query) {
+                $query->withTrashed();
+            },
+            'jadwalSempro.dosenPenguji3.user' => function ($query) {
+                $query->withTrashed();
+            }
+        ])
             ->where('mahasiswa_id', $mahasiswa->id)
             ->get();
 
         $canSubmit = !$pengajuan->whereIn('status', ['pending', 'diterima'])->count();
         $bidangKeilmuan = BidangKeilmuan::all();
-        $dosenPembimbing = Dosen::all();
+        $dosenPembimbing = Dosen::has('pembimbing')->with(['user', 'bidangKeilmuan'])->get();
 
         return view('mahasiswa.pengajuan_sempro.index', compact('pengajuan', 'canSubmit', 'bidangKeilmuan', 'dosenPembimbing'));
     }

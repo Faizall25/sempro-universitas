@@ -11,6 +11,19 @@ use Illuminate\Validation\Rule;
 
 class HasilController extends Controller
 {
+    private function determineStatus($rata_rata)
+    {
+        if ($rata_rata > 85) {
+            return 'lolos_tanpa_revisi';
+        } elseif ($rata_rata >= 75 && $rata_rata <= 84) {
+            return 'revisi_minor';
+        } elseif ($rata_rata >= 70 && $rata_rata <= 74) {
+            return 'revisi_mayor';
+        } else {
+            return 'tidak_lolos';
+        }
+    }
+
     public function index(Request $request)
     {
         $search = $request->query('search');
@@ -26,13 +39,12 @@ class HasilController extends Controller
                         ->orWhere('status', 'like', "%{$search}%");
                 });
             })
-            ->paginate(10); // Add pagination
+            ->paginate(10);
         return view('admin.hasil.index', compact('hasil', 'search'));
     }
 
     public function create()
     {
-        // Hanya ambil jadwal sempro yang belum memiliki hasil
         $jadwalSemproList = JadwalSempro::whereNotIn('id', HasilSempro::pluck('jadwal_sempro_id'))
             ->with('pengajuanSempro')
             ->get();
@@ -50,14 +62,12 @@ class HasilController extends Controller
             'nilai_peng1' => 'required|numeric|min:0|max:100',
             'nilai_peng2' => 'required|numeric|min:0|max:100',
             'nilai_peng3' => 'required|numeric|min:0|max:100',
-            'status' => 'required|in:lolos_tanpa_revisi,revisi_minor,revisi_mayor,tidak_lolos',
-            'revisi_file' => 'nullable|file|mimes:pdf|max:5120', // Max 5MB
+            'revisi_file' => 'nullable|file|mimes:pdf|max:5120',
         ]);
 
-        // Hitung rata-rata
         $rata_rata = ($validated['nilai_peng1'] + $validated['nilai_peng2'] + $validated['nilai_peng3']) / 3;
+        $status = $this->determineStatus($rata_rata);
 
-        // Simpan file revisi jika ada
         $revisi_file_path = null;
         if ($request->hasFile('revisi_file')) {
             $revisi_file_path = $request->file('revisi_file')->storeAs(
@@ -73,7 +83,7 @@ class HasilController extends Controller
             'nilai_peng2' => $validated['nilai_peng2'],
             'nilai_peng3' => $validated['nilai_peng3'],
             'rata_rata' => $rata_rata,
-            'status' => $validated['status'],
+            'status' => $status,
             'revisi_file_path' => $revisi_file_path,
         ]);
 
@@ -84,7 +94,6 @@ class HasilController extends Controller
     public function edit($id)
     {
         $hasil = HasilSempro::findOrFail($id);
-        // Ambil jadwal sempro yang belum memiliki hasil, tapi sertakan jadwal saat ini
         $jadwalSemproList = JadwalSempro::whereNotIn('id', HasilSempro::where('id', '!=', $id)->pluck('jadwal_sempro_id'))
             ->with('pengajuanSempro')
             ->get();
@@ -104,14 +113,12 @@ class HasilController extends Controller
             'nilai_peng1' => 'required|numeric|min:0|max:100',
             'nilai_peng2' => 'required|numeric|min:0|max:100',
             'nilai_peng3' => 'required|numeric|min:0|max:100',
-            'status' => 'required|in:lolos_tanpa_revisi,revisi_minor,revisi_mayor,tidak_lolos',
-            'revisi_file' => 'nullable|file|mimes:pdf|max:5120', // Max 5MB
+            'revisi_file' => 'nullable|file|mimes:pdf|max:5120',
         ]);
 
-        // Hitung rata-rata
         $rata_rata = ($validated['nilai_peng1'] + $validated['nilai_peng2'] + $validated['nilai_peng3']) / 3;
+        $status = $this->determineStatus($rata_rata);
 
-        // Simpan file revisi baru jika ada, hapus file lama
         $revisi_file_path = $hasil->revisi_file_path;
         if ($request->hasFile('revisi_file')) {
             if ($revisi_file_path && Storage::disk('public')->exists($revisi_file_path)) {
@@ -130,7 +137,7 @@ class HasilController extends Controller
             'nilai_peng2' => $validated['nilai_peng2'],
             'nilai_peng3' => $validated['nilai_peng3'],
             'rata_rata' => $rata_rata,
-            'status' => $validated['status'],
+            'status' => $status,
             'revisi_file_path' => $revisi_file_path,
         ]);
 
@@ -148,5 +155,36 @@ class HasilController extends Controller
 
         return redirect()->route('admin.hasil.sempro.index')
             ->with('success', 'Hasil sempro berhasil dihapus.');
+    }
+
+    public function uploadRevisi(Request $request, $id)
+    {
+        $hasil = HasilSempro::findOrFail($id);
+
+        if (in_array($hasil->status, ['lolos_tanpa_revisi', 'tidak_lolos'])) {
+            return redirect()->route('admin.hasil.sempro.index')
+                ->withErrors(['error' => 'Upload file revisi tidak diizinkan untuk status ' . str_replace('_', ' ', ucwords($hasil->status))]);
+        }
+
+        $validated = $request->validate([
+            'revisi_file' => 'required|file|mimes:pdf|max:5120',
+        ]);
+
+        if ($hasil->revisi_file_path && Storage::disk('public')->exists($hasil->revisi_file_path)) {
+            Storage::disk('public')->delete($hasil->revisi_file_path);
+        }
+
+        $revisi_file_path = $request->file('revisi_file')->storeAs(
+            'revisi',
+            time() . '_' . $request->file('revisi_file')->getClientOriginalName(),
+            'public'
+        );
+
+        $hasil->update([
+            'revisi_file_path' => $revisi_file_path,
+        ]);
+
+        return redirect()->route('admin.hasil.sempro.index')
+            ->with('success', 'File revisi berhasil diunggah.');
     }
 }

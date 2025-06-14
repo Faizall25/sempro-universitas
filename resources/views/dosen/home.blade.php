@@ -9,8 +9,9 @@
                 <div
                     class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center text-white text-center p-4">
                     <div>
-                        <h2 class="text-2xl font-bold">Selamat Datang dosen!</h2>
-                        <p class="mt-2">Ikuti update terbaru dari Universitas Islam Negeri Maulana Malik Ibrahim Malang.</p>
+                        <h2 class="text-2xl font-bold">Selamat Datang Dosen!</h2>
+                        <p class="mt-2">Ikuti update terbaru dari Universitas Islam Negeri Maulana Malik Ibrahim Malang.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -42,121 +43,228 @@
             </div>
         </div>
 
-        <!-- Card Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Card 1: Profil dosen -->
-            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <h3 style="color: #006066; font-weight: bold; font-size: 1.5rem; margin-bottom: 1.5rem;">
-                    Jadwal Mata Kuliah
-                </h3>
-
-                @if($jadwal->count())
-                    <div style="overflow-x:auto;">
-                        <table
-                            style="min-width: 100%; border-collapse: collapse; border: 2px solid #006066; border-radius: 8px; overflow: hidden;">
-                            <thead style="background-color: #006066; color: white;">
-                                <tr>
-                                    <th
-                                        style="padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        Hari</th>
-                                    <th
-                                        style="padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        Pukul</th>
-                                    <th
-                                        style="padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        Mata Kuliah</th>
-                                    <th
-                                        style="padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        Dosen</th>
-                                    <th
-                                        style="padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        Kelas</th>
-                                    <th
-                                        style="padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                                        Ruang</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($jadwal as $item)
-                                    <tr style="border-top: 1px solid #ddd; transition: background-color 0.3s ease, color 0.3s ease; cursor: pointer;"
-                                        onmouseover="this.style.backgroundColor='rgba(0, 96, 102, 0.15)'; this.style.color='inherit';"
-                                        onmouseout="this.style.backgroundColor=''; this.style.color='';">
-                                        <td style="padding: 12px 16px; font-size: 0.875rem;">{{ $item->hari }}</td>
-                                        <td style="padding: 12px 16px; font-size: 0.875rem;">
-                                            {{ \Carbon\Carbon::parse($item->pukul)->format('H:i') }}</td>
-                                        <td style="padding: 12px 16px; font-size: 0.875rem;">{{ $item->mata_kuliah }}</td>
-                                        <td style="padding: 12px 16px; font-size: 0.875rem;">
-                                            {{ $item->dosen->user->name ?? 'Nama tidak tersedia' }}</td>
-                                        <td style="padding: 12px 16px; font-size: 0.875rem;">{{ $item->kelas }}</td>
-                                        <td style="padding: 12px 16px; font-size: 0.875rem;">{{ $item->ruang }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-
-
-                @else
-                    <p class="text-gray-600">Belum ada jadwal mengajar.</p>
-                @endif
-
-                <a href="{{ route('dosen.jadwal_perkuliahan.index') }}"
-                    class="mt-4 inline-block px-4 py-2 bg-teal-600 rounded-lg hover:bg-teal-700 transition duration-300"
-                    style="color: white; background-color:#006066;">Lihat Detail</a>
+        <!-- Notifikasi -->
+        @if (session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6" role="alert">
+                <p class="text-sm">{{ session('success') }}</p>
             </div>
+        @endif
+        @if (session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6" role="alert">
+                <p class="text-sm">{{ session('error') }}</p>
+            </div>
+        @endif
 
-            <!-- Card 2: Jadwal Kuliah Hari Ini -->
-            <div class="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300">
-                <h3 style="color: #006066; font-weight: bold; font-size: 1.5rem; margin-bottom: 1.5rem;">
-                    Daftar Pengajuan Seminar Proposal Mahasiswa
-                </h3>
-
-                @if($pengajuan->isEmpty())
-                    <div style="color: #006066;" class="text-center italic">
-                        Belum ada pengajuan seminar proposal.
-                    </div>
-                @else
-                    <div class="overflow-x-auto rounded-xl" style="border: 1px solid #006066;">
-                        <table class="min-w-full bg-white" style="border-collapse: collapse; width: 100%;">
-                            <thead>
-                                <tr>
-                                    <th style="color: #006066; padding: 12px; text-align: left; border-bottom: 1px solid #ccc;">No</th>
-                                    <th style="color: #006066; padding: 12px; text-align: left; border-bottom: 1px solid #ccc;">NIM</th>
-                                    <th style="color: #006066; padding: 12px; text-align: left; border-bottom: 1px solid #ccc;">Nama Mahasiswa</th>
-                                    <th style="color: #006066; padding: 12px; text-align: left; border-bottom: 1px solid #ccc;">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($pengajuan as $index => $item)
-                                    <tr style="border-bottom: 1px solid #e0e0e0;" class="hover:bg-gray-50 transition duration-200">
-                                        <td style="padding: 12px;">{{ $index + 1 }}</td>
-                                        <td style="padding: 12px;">{{ $item->mahasiswa->nim ?? '-' }}</td>
-                                        <td style="padding: 12px;">{{ $item->mahasiswa->user->name ?? '-' }}</td>
-                                        <td style="padding: 12px;">
-                                            <span class="px-3 py-1 rounded-full text-xs 
-                                                {{ 
-                                                    $item->status == 'diterima' ? 'bg-green-100 text-green-700' :
-                                                    ($item->status == 'ditolak' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') 
-                                                }}">
-                                                {{ ucfirst($item->status) }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-
-                <div class="mt-6 text-right">
-                    <a href="{{ route('dosen.profile') }}"
-                    class="inline-block px-5 py-2 rounded-xl hover:bg-[#004f4f] transition duration-300 shadow"
-                    style="color: ghostwhite; background: #006066;">
-                        Lihat Detail
-                    </a>
+        <!-- Statistik Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-lg shadow-lg flex items-center space-x-4">
+                <div class="p-3 bg-yellow-100 rounded-full">
+                    <i class="fas fa-file-alt text-yellow-600 text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="text-gray-600">Pengajuan Pending</h4>
+                    <p class="text-2xl font-semibold text-gray-800">{{ $stats['pending_pengajuan'] }}</p>
                 </div>
             </div>
+            <div class="bg-white p-4 rounded-lg shadow-lg flex items-center space-x-4">
+                <div class="p-3 bg-blue-100 rounded-full">
+                    <i class="fas fa-calendar-alt text-blue-600 text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="text-gray-600">Jadwal Sempro Minggu Ini</h4>
+                    <p class="text-2xl font-semibold text-gray-800">{{ $stats['jadwal_sempro_week'] }}</p>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-lg flex items-center space-x-4">
+                <div class="p-3 bg-green-100 rounded-full">
+                    <i class="fas fa-chalkboard-teacher text-green-600 text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="text-gray-600">Mata Kuliah Minggu Ini</h4>
+                    <p class="text-2xl font-semibold text-gray-800">{{ $stats['mata_kuliah_week'] }}</p>
+                </div>
+            </div>
+        </div>
 
+        <!-- Jadwal Mata Kuliah Section -->
+        <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-gray-800">Jadwal Mata Kuliah Hari Ini ({{ $today }})</h3>
+                <a href="{{ route('dosen.profile') }}"
+                    class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition duration-300">Lihat
+                    Semua Jadwal</a>
+            </div>
+            @if ($jadwalMataKuliah->isEmpty())
+                <p class="text-gray-500 italic">Tidak ada jadwal mata kuliah hari ini.</p>
+            @else
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white rounded-lg">
+                        <thead class="bg-gray-200 text-gray-700">
+                            <tr>
+                                <th class="py-2 px-4 text-left">Waktu</th>
+                                <th class="py-2 px-4 text-left">Mata Kuliah</th>
+                                <th class="py-2 px-4 text-left">Kode</th>
+                                <th class="py-2 px-4 text-left">Kelas</th>
+                                <th class="py-2 px-4 text-left">Ruang</th>
+                                <th class="py-2 px-4 text-left">SKS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($jadwalMataKuliah as $jadwal)
+                                <tr class="border-b hover:bg-gray-100">
+                                    <td class="py-2 px-4">{{ $jadwal->pukul->format('H:i') }}</td>
+                                    <td class="py-2 px-4">{{ $jadwal->mata_kuliah }}</td>
+                                    <td class="py-2 px-4">{{ $jadwal->kode }}</td>
+                                    <td class="py-2 px-4">{{ $jadwal->kelas }}</td>
+                                    <td class="py-2 px-4">{{ $jadwal->ruang }}</td>
+                                    <td class="py-2 px-4">{{ $jadwal->sks }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div>
+
+        <!-- Pengajuan Sempro Section -->
+        <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-gray-800">Pengajuan Seminar Proposal</h3>
+                <form method="GET" action="{{ route('dosen.home') }}" class="flex items-center">
+                    <input type="text" name="search" value="{{ request('search') }}"
+                        placeholder="Cari judul atau nama mahasiswa..."
+                        class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
+                    <button type="submit"
+                        class="ml-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700">Cari</button>
+                </form>
+            </div>
+            @if ($pengajuanSempro->isEmpty())
+                <p class="text-gray-500 italic">Belum ada pengajuan seminar proposal yang Anda bimbing.</p>
+            @else
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white rounded-lg">
+                        <thead class="bg-gray-200 text-gray-700">
+                            <tr>
+                                <th class="py-2 px-4 text-left">No</th>
+                                <th class="py-2 px-4 text-left">Judul</th>
+                                <th class="py-2 px-4 text-left">Nama Mahasiswa</th>
+                                <th class="py-2 px-4 text-left">Bidang Keilmuan</th>
+                                <th class="py-2 px-4 text-left">Status</th>
+                                <th class="py-2 px-4 text-left">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($pengajuanSempro as $index => $pengajuan)
+                                <tr class="border-b hover:bg-gray-100">
+                                    <td class="py-2 px-4">{{ $index + $pengajuanSempro->firstItem() }}</td>
+                                    <td class="py-2 px-4">
+                                        {{ $pengajuan->judul }}
+                                        @if ($pengajuan->created_at->diffInHours(now()) < 24)
+                                            <span
+                                                class="ml-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">Baru</span>
+                                        @endif
+                                    </td>
+                                    <td class="py-2 px-4">{{ $pengajuan->mahasiswa->user->name ?? 'N/A' }}</td>
+                                    <td class="py-2 px-4">{{ $pengajuan->bidangKeilmuan->name ?? 'N/A' }}</td>
+                                    <td class="py-2 px-4">
+                                        <span
+                                            class="inline-block px-2 py-1 text-sm font-semibold rounded-full {{ $pengajuan->status == 'pending' ? 'bg-yellow-200 text-yellow-800' : ($pengajuan->status == 'diterima' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800') }}">
+                                            {{ ucfirst($pengajuan->status) }}
+                                        </span>
+                                    </td>
+                                    <td class="py-2 px-4 flex space-x-2">
+                                        @if ($pengajuan->status == 'pending')
+                                            <form action="{{ route('dosen.pengajuan-sempro.approve', $pengajuan->id) }}"
+                                                method="POST" class="inline-block">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300"
+                                                    onclick="return confirm('Apakah Anda yakin ingin menyetujui pengajuan ini?')">
+                                                    Setujui
+                                                </button>
+                                            </form>
+                                            <form action="{{ route('dosen.pengajuan-sempro.reject', $pengajuan->id) }}"
+                                                method="POST" class="inline-block">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300"
+                                                    onclick="return confirm('Apakah Anda yakin ingin menolak pengajuan ini?')">
+                                                    Tolak
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span class="text-gray-500">Tidak ada aksi</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    <div class="mt-4">
+                        {{ $pengajuanSempro->links() }}
+                    </div>
+                </div>
+            @endif
+        </div>
+
+        <!-- Jadwal Sempro Section -->
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Jadwal Seminar Proposal (Dijadwalkan)</h3>
+            @if ($jadwalSempro->isEmpty())
+                <p class="text-gray-500 italic">Tidak ada jadwal seminar proposal yang dijadwalkan.</p>
+            @else
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white rounded-lg">
+                        <thead class="bg-gray-200 text-gray-700">
+                            <tr>
+                                <th class="py-2 px-4 text-left">Tanggal</th>
+                                <th class="py-2 px-4 text-left">Waktu</th>
+                                <th class="py-2 px-4 text-left">Ruang</th>
+                                <th class="py-2 px-4 text-left">Judul</th>
+                                <th class="py-2 px-4 text-left">Mahasiswa</th>
+                                <th class="py-2 px-4 text-left">Peran</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($jadwalSempro as $jadwal)
+                                @php
+                                    $roles = [];
+                                    if (
+                                        $jadwal->pengajuanSempro &&
+                                        $jadwal->pengajuanSempro->dosen_pembimbing_id == $dosen->id
+                                    ) {
+                                        $roles[] = 'Pembimbing';
+                                    }
+                                    if (
+                                        in_array($dosen->id, [
+                                            $jadwal->dosen_penguji_1,
+                                            $jadwal->dosen_penguji_2,
+                                            $jadwal->dosen_penguji_3,
+                                        ])
+                                    ) {
+                                        $roles[] = 'Penguji';
+                                    }
+                                    $roleText = implode(' & ', $roles);
+                                @endphp
+                                <tr class="border-b hover:bg-gray-100">
+                                    <td class="py-2 px-4">{{ $jadwal->tanggal->format('d M Y') }}</td>
+                                    <td class="py-2 px-4">{{ $jadwal->waktu->format('H:i') }}</td>
+                                    <td class="py-2 px-4">{{ $jadwal->ruang }}</td>
+                                    <td class="py-2 px-4">{{ $jadwal->pengajuanSempro->judul ?? 'N/A' }}</td>
+                                    <td class="py-2 px-4">{{ $jadwal->pengajuanSempro->mahasiswa->user->name ?? 'N/A' }}
+                                    </td>
+                                    <td class="py-2 px-4">
+                                        <span
+                                            class="inline-block px-2 py-1 text-sm font-semibold rounded-full {{ str_contains($roleText, 'Pembimbing') ? 'bg-green-200 text-green-800' : 'bg-blue-200 text-blue-800' }}">
+                                            {{ $roleText ?: 'N/A' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
         </div>
     </div>
 

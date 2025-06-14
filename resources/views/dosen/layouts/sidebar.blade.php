@@ -25,7 +25,7 @@
             <li>
                 <a href="{{ route('dosen.informasi_pengajuan.index') }}" class="flex items-center space-x-3 p-2 rounded-lg {{ request()->routeIs('dosen.informasi_pengajuan.index') ? 'bg-gray-200 text-teal-700' : 'hover:bg-gray-200' }}">
                     <i class="fas fa-calendar"></i>
-                    <span>Informasi Pengajuan</span>
+                    <span>Pengajuan Penguji</span>
                 </a>
             </li>
             <li>

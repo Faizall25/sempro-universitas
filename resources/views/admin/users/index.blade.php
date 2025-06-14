@@ -32,7 +32,7 @@
                     <tbody>
                         @foreach ($users as $index => $user)
                             <tr class="border-b border-gray-200 hover:bg-gray-100 transition duration-200 ease-in-out">
-                                <td class="px-6 py-4 text-gray-700">{{ $index + 1 }}</td>
+                                <td class="px-6 py-4 text-gray-700">{{ $index + $users->firstItem() }}</td>
                                 <td class="px-6 py-4 text-gray-700">{{ $user->name }}</td>
                                 <td class="px-6 py-4 text-gray-700">{{ $user->email }}</td>
                                 <td class="px-6 py-4 text-gray-700">{{ ucfirst($user->role) }}</td>

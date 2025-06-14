@@ -14,8 +14,18 @@
         </div>
 
         @if (session('success'))
-            <div class="bg-green-50 border-l-4 border-green-400 text-green-700 p-4 mb-6 rounded-lg shadow-sm" role="alert">
+            <div class="bg-green-50 border-l-4 border-green-400 text-green-700 p-4 mb-6 rounded-lg shadow-sm"
+                role="alert">
                 {{ session('success') }}
+            </div>
+        @endif
+        @if ($errors->any())
+            <div class="bg-red-50 border-l-4 border-red-400 text-red-700 p-4 mb-6 rounded-lg shadow-sm" role="alert">
+                <ul class="list-disc pl-5">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
         @endif
 
@@ -38,13 +48,12 @@
                     <tbody>
                         @foreach ($hasil as $index => $item)
                             <tr class="border-b border-gray-200 hover:bg-gray-100 transition duration-200 ease-in-out">
-                                <td class="px-6 py-4 text-gray-700">{{ $index + 1 }}</td>
+                                <td class="px-6 py-4 text-gray-700">{{ $index + $hasil->firstItem() }}</td>
                                 <td class="px-6 py-4 text-gray-700">
-                                    {{ $item->jadwalSempro->pengajuanSempro->judul ?? 'N/A' }}</td>
+                                    {{ $item->jadwalSempro->pengajuanSempro->judul ?? 'N/A' }}
+                                </td>
                                 <td class="px-6 py-4 text-gray-700">
-                                    Penguji 1: {{ $item->nilai_peng1 }}<br>
-                                    Penguji 2: {{ $item->nilai_peng2 }}<br>
-                                    Penguji 3: {{ $item->nilai_peng3 }}
+                                    {{ $item->nilai_peng1 }} | {{ $item->nilai_peng2 }} | {{ $item->nilai_peng3 }}
                                 </td>
                                 <td class="px-6 py-4 text-gray-700">{{ number_format($item->rata_rata, 2) }}</td>
                                 <td class="px-6 py-4 text-gray-700">
@@ -60,6 +69,14 @@
                                     @else
                                         Tidak ada
                                     @endif
+                                    <button
+                                        class="relative px-3 py-1 {{ in_array($item->status, ['lolos_tanpa_revisi', 'tidak_lolos']) ? 'bg-gray-500' : 'bg-green-500' }} text-white rounded-lg {{ in_array($item->status, ['lolos_tanpa_revisi', 'tidak_lolos']) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-600' }} transition duration-300 ease-in-out"
+                                        data-tooltip="Upload revisi"
+                                        {{ in_array($item->status, ['lolos_tanpa_revisi', 'tidak_lolos']) ? 'disabled' : '' }}
+                                        onclick="openModal('uploadModal-{{ $item->id }}')">
+                                        <i class="fas fa-upload"></i>
+                                        <span class="tooltip">Upload</span>
+                                    </button>
                                 </td>
                                 <td class="px-6 py-4 flex space-x-2">
                                     <a href="{{ route('admin.hasil.sempro.edit', $item->id) }}"
@@ -82,6 +99,46 @@
                                     </form>
                                 </td>
                             </tr>
+
+                            <!-- Modal untuk Upload Revisi -->
+                            <div id="uploadModal-{{ $item->id }}"
+                                class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+                                <div class="bg-white rounded-lg shadow-lg max-w-md w-full p-6">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <h3 class="text-lg font-semibold text-gray-800">Upload File Revisi</h3>
+                                        <button class="text-gray-500 hover:text-gray-700"
+                                            onclick="closeModal('uploadModal-{{ $item->id }}')">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <form action="{{ route('admin.hasil.sempro.upload-revisi', $item->id) }}"
+                                        method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="mb-4">
+                                            <label for="revisi_file_{{ $item->id }}"
+                                                class="block text-gray-700 font-medium mb-2">File Revisi (PDF, maks
+                                                5MB)</label>
+                                            <input type="file" id="revisi_file_{{ $item->id }}" name="revisi_file"
+                                                accept=".pdf"
+                                                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            @error('revisi_file')
+                                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                        <div class="flex justify-end space-x-2">
+                                            <button type="button"
+                                                class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition duration-200"
+                                                onclick="closeModal('uploadModal-{{ $item->id }}')">
+                                                Batal
+                                            </button>
+                                            <button type="submit"
+                                                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
+                                                <i class="fas fa-upload mr-2"></i> Unggah
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         @endforeach
                     </tbody>
                 </table>
@@ -146,6 +203,14 @@
                 element.appendChild(tooltip);
                 element.classList.add('relative');
             });
+
+            function openModal(modalId) {
+                document.getElementById(modalId).classList.remove('hidden');
+            }
+
+            function closeModal(modalId) {
+                document.getElementById(modalId).classList.add('hidden');
+            }
         </script>
     @endpush
 @endsection

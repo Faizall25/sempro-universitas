@@ -15,16 +15,16 @@ class JadwalSemproSeeder extends Seeder
     {
         // Define schedule details: dates, times, and rooms
         $scheduleDetails = [
-            ['tanggal' => '2025-06-01', 'waktu' => '09:00:00', 'ruang' => 'Ruang Seminar 1'],
+            ['tanggal' => '2025-06-01', 'waktu' => '12:00:00', 'ruang' => 'Ruang Seminar 1'],
             ['tanggal' => '2025-06-01', 'waktu' => '13:00:00', 'ruang' => 'Ruang Seminar 2'],
-            ['tanggal' => '2025-06-02', 'waktu' => '10:00:00', 'ruang' => 'Ruang Seminar 3'],
-            ['tanggal' => '2025-06-02', 'waktu' => '14:00:00', 'ruang' => 'Ruang Seminar 1'],
-            ['tanggal' => '2025-06-03', 'waktu' => '08:30:00', 'ruang' => 'Ruang Seminar 2'],
-            ['tanggal' => '2025-06-03', 'waktu' => '11:30:00', 'ruang' => 'Ruang Seminar 3'],
-            ['tanggal' => '2025-06-04', 'waktu' => '09:30:00', 'ruang' => 'Ruang Seminar 1'],
-            ['tanggal' => '2025-06-04', 'waktu' => '13:30:00', 'ruang' => 'Ruang Seminar 2'],
-            ['tanggal' => '2025-06-05', 'waktu' => '10:30:00', 'ruang' => 'Ruang Seminar 3'],
-            ['tanggal' => '2025-06-05', 'waktu' => '15:00:00', 'ruang' => 'Ruang Seminar 1'],
+            ['tanggal' => '2025-06-02', 'waktu' => '12:00:00', 'ruang' => 'Ruang Seminar 3'],
+            ['tanggal' => '2025-06-02', 'waktu' => '13:00:00', 'ruang' => 'Ruang Seminar 1'],
+            ['tanggal' => '2025-06-03', 'waktu' => '14:00:00', 'ruang' => 'Ruang Seminar 2'],
+            ['tanggal' => '2025-06-03', 'waktu' => '13:00:00', 'ruang' => 'Ruang Seminar 3'],
+            ['tanggal' => '2025-06-04', 'waktu' => '12:00:00', 'ruang' => 'Ruang Seminar 1'],
+            ['tanggal' => '2025-06-04', 'waktu' => '13:00:00', 'ruang' => 'Ruang Seminar 2'],
+            ['tanggal' => '2025-06-05', 'waktu' => '14:00:00', 'ruang' => 'Ruang Seminar 3'],
+            ['tanggal' => '2025-06-05', 'waktu' => '13:00:00', 'ruang' => 'Ruang Seminar 1'],
         ];
 
         $jadwal = [];

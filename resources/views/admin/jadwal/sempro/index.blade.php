@@ -75,7 +75,7 @@
                         <tbody>
                             @foreach ($jadwal as $index => $item)
                                 <tr class="border-b border-gray-200 hover:bg-gray-100 transition duration-200 ease-in-out">
-                                    <td class="px-6 py-4 text-gray-700">{{ $index + 1 }}</td>
+                                    <td class="px-6 py-4 text-gray-700">{{ $index + $jadwal->firstItem() }}</td>
                                     <td class="px-6 py-4 text-gray-700">{{ $item->tanggal->format('d-m-Y') }}</td>
                                     <td class="px-6 py-4 text-gray-700">{{ $item->waktu->format('H:i') }}</td>
                                     <td class="px-6 py-4 text-gray-700">{{ $item->ruang }}</td>
@@ -159,7 +159,7 @@
                         <tbody>
                             @foreach ($jadwal as $index => $item)
                                 <tr class="border-b border-gray-200 hover:bg-gray-100 transition duration-200 ease-in-out">
-                                    <td class="px-6 py-4 text-gray-700">{{ $index + 1 }}</td>
+                                    <td class="px-6 py-4 text-gray-700">{{ $index + $jadwal->firstItem() }}</td>
                                     <td class="px-6 py-4 text-gray-700">
                                         {{ $item->pengajuanSempro->judul ?? 'N/A' }}
                                     </td>
@@ -313,8 +313,11 @@
     @push('scripts')
         <script>
             function showTab(tab) {
+                // Sembunyikan semua tab content
                 document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('block'));
                 document.getElementById(tab).classList.add('block');
+
+                // Update tab aktif
                 document.querySelectorAll('ul li a').forEach(link => {
                     link.classList.remove('active-tab');
                     link.classList.add('text-gray-600', 'hover:text-blue-600');
@@ -322,9 +325,8 @@
                 const activeLink = document.getElementById(`tab-${tab}`);
                 activeLink.classList.add('active-tab');
                 activeLink.classList.remove('text-gray-600', 'hover:text-blue-600');
-                document.querySelectorAll('.tab-content a').forEach(link => {
-                    link.href = link.href.split('?')[0] + '?tab=' + tab;
-                });
+
+                // Update URL tanpa mengubah link pagination
                 const url = new URL(window.location);
                 url.searchParams.set('tab', tab);
                 window.history.pushState({}, '', url);

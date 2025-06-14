@@ -62,7 +62,7 @@
                     @enderror
                 </div>
 
-                <div class="mb-4">
+                {{-- <div class="mb-4">
                     <label for="status" class="block text-gray-700 font-medium mb-2">Status</label>
                     <select id="status" name="status"
                         class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
@@ -79,7 +79,7 @@
                     @error('status')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
-                </div>
+                </div> --}}
 
                 <div class="mb-4">
                     <label for="revisi_file" class="block text-gray-700 font-medium mb-2">File Revisi (PDF, maks
